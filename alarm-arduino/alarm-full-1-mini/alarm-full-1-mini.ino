@@ -4,8 +4,8 @@
 #include <MyESP8266Mini.h>
 
 //wifi connection
-const char *SSID     = "YYYYYY";
-const char *PASSWORD = "XXXXXX";
+const char *SSID     = "YYYY";
+const char *PASSWORD = "XXXX";
 SoftwareSerial mySerial(10, 12); //SoftwareSerial pins for MEGA/Uno. For other boards see: https://www.arduino.cc/en/Reference/SoftwareSerial
 //ESP8266 wifi(mySerial);
 MyESP8266Mini wifi(mySerial);
@@ -16,11 +16,12 @@ char requestStringBuffer[120]; //buffer string for
 const char *serverName = "192.168.0.102";
 const int  port = 8080;
 
-//const long ACTIVATION_TIMER_INTERVAL = 35000; //35 sec.
-const long ACTIVATION_TIMER_INTERVAL = 3000; //35 sec.
+const long ACTIVATION_TIMER_INTERVAL = 35000; //35 sec.
+//const long ACTIVATION_TIMER_INTERVAL = 3000; //35 sec.
 const long COUNTDOWN_ALARM_TIMER_INTERVAL = 30000; //30 sec.
 const long RED_LED_OFF_TIMER_INTERVAL = 60000; //60 sec.
 const long GREEN_LED_OFF_TIMER_INTERVAL = 65000; //60 sec.
+const long HEART_BEAT_TIMER_INTERVAL = 36000;// 1 hour heartbeat
 //password
 const String CONST_PASSWORD = "A123";
 
@@ -35,6 +36,7 @@ int countdownTimerId;
 int activationDelayTimerId;
 int switchOffGreenLedTimerId;
 int switchOffRedLedTimerId;
+int heartBeatTimerId;
 
 //movement detector vars.
 byte pirPin = 11; // Input for HC-S501, dtektor pohybu
@@ -82,7 +84,7 @@ void setup() {
   while ( isOk != true) {
     if (!wifi.init(SSID, PASSWORD))
     {
-      //Serial.println("Wifi Init failed. Check configuration. Alarm not started!!!");
+      Serial.println(F("Wifi Init failed. Check configuration. Alarm not started!!!"));
       //TODO bzucak bzuci neustale!!!!
       delay(3000);
     } else {
@@ -93,7 +95,6 @@ void setup() {
 }
 
 void loop() {
-  //httpGetAlarmStart();//just for testing, remove this!!!!!!!!!!!!!!!!!!!!!
   simpleTimer.run();
   
   if (isRedLedOn) {
@@ -116,29 +117,32 @@ void loop() {
         setGreenLedOff();
         if (!simpleTimer.isEnabled(countdownTimerId)) {
             countdownTimerId = simpleTimer.setTimeout(COUNTDOWN_ALARM_TIMER_INTERVAL, runAlarm);
-            //Serial.println();Serial.print("Timer countdownTimerId (");Serial.print(countdownTimerId);Serial.print(") started at ");Serial.print(millis()/1000);Serial.print(" sec.");
+            Serial.println();Serial.print(F("Timer countdownTimerId ("));Serial.print(countdownTimerId);Serial.print(F(") started at "));Serial.print(millis()/1000);Serial.print(F(" sec."));
             pirValue = "0";
         } else {
-            //Serial.println();Serial.print("Timer countdownTimerId (");Serial.print(countdownTimerId);Serial.print(") has been already started before.");
+            Serial.println();Serial.print(F("Timer countdownTimerId ("));Serial.print(countdownTimerId);Serial.print(F(") has been already started before."));
         }
       }
       
       //stop countdown - deactivation
       if (rightPassword == inputPassword) {
         simpleTimer.disable(countdownTimerId);
-        //Serial.println();Serial.print("DEACTIVATION: ");Serial.print(" Timer countdownTimerId ("); Serial.print(countdownTimerId); Serial.print(") has been disabled by given correct password at "); Serial.print(millis()/1000);Serial.print(" sec.");
+        Serial.println();Serial.print(F("DEACTIVATION: "));Serial.print(F(" Timer countdownTimerId (")); Serial.print(countdownTimerId); Serial.print(F(") has been disabled by given correct password at ")); Serial.print(millis()/1000);Serial.print(F(" sec."));
         
         inputPassword = "x"; //workaround in order to not execute the disabling all the time
         isDetectorOn = false;
         isGreenLedOn = true;
 
         switchOffGreenLedTimerId = simpleTimer.setTimeout(GREEN_LED_OFF_TIMER_INTERVAL, switchOffGreenLed); //set ot 60 sec.
-        //Serial.println();Serial.print("Timer switchOffLedTimerId (");Serial.print(switchOffGreenLedTimerId);Serial.print(") started at ");;Serial.print(millis()/1000);Serial.print(" sec.");
+        Serial.println();Serial.print(F("Timer switchOffLedTimerId ("));Serial.print(switchOffGreenLedTimerId);Serial.print(F(") started at "));;Serial.print(millis()/1000);Serial.print(F(" sec."));
 
         isRedLedOn = false;
 
         //stop alarm server monitoring
         httpGetAlarmStop();        
+        
+        //stop sending heartbeats
+        simpleTimer.deleteTimer(heartBeatTimerId);
       }
       if (key == '#') {
         //reset given password
@@ -153,12 +157,12 @@ void loop() {
       if (key == '*') {
           if (!simpleTimer.isEnabled(activationDelayTimerId)) {
               activationDelayTimerId = simpleTimer.setTimeout(ACTIVATION_TIMER_INTERVAL, activateDetector);
-              //Serial.println();Serial.print("Timer activationDelayTimerId (");Serial.print(activationDelayTimerId);Serial.print(") started at ");Serial.print(millis()/1000);Serial.print(" sec.");
+              Serial.println();Serial.print(F("Timer activationDelayTimerId ("));Serial.print(activationDelayTimerId);Serial.print(F(") started at "));Serial.print(millis()/1000);Serial.print(F(" sec."));
               isGreenLedOn = true;
               isGreenLedBlinking = true;
               setRedLedOff();  
           } else {
-              //Serial.println();Serial.print("Timer activationDelayTimerId (");Serial.print(activationDelayTimerId);Serial.print(") has been already started before.");
+              Serial.println();Serial.print(F("Timer activationDelayTimerId ("));Serial.print(activationDelayTimerId);Serial.print(F(") has been already started before."));
           }
           
       }
@@ -198,7 +202,7 @@ void runAlarm() {
 
     //switch off red led after some time
     switchOffRedLedTimerId = simpleTimer.setTimeout(RED_LED_OFF_TIMER_INTERVAL, setRedLedOff); //set ot 60 sec.
-    //Serial.println();Serial.print("Timer switchOffRedLedTimerId (");Serial.print(switchOffRedLedTimerId);Serial.print(") started at ");;Serial.print(millis()/1000);Serial.print(" sec.");
+    Serial.println();Serial.print(F("Timer switchOffRedLedTimerId ("));Serial.print(switchOffRedLedTimerId);Serial.print(F(") started at "));;Serial.print(millis()/1000);Serial.print(F(" sec."));
 }
 
 /**
@@ -215,6 +219,8 @@ void activateDetector() {
     //sent info to start alarm server
     //Serial.println("Sending request to start Alarm server");
     httpGetAlarmStart();
+
+    heartBeatTimerId = simpleTimer.setInterval(HEART_BEAT_TIMER_INTERVAL, sendHeartBeat); //set to 1 hour interval;
 }
 
 /**
@@ -262,6 +268,14 @@ void setGreenLedOff() {
   switchOffGreenLed();
 }
 
+/**
+ * sends heart beats to the alarm server
+ */
+void sendHeartBeat() {
+  //TODO
+  httpGetAlarmHeartBeat();
+}
+
 /***************************************************************
 **** HTTP functions calls alarm server etc.
 *****************************************************************/
@@ -306,4 +320,5 @@ void httpGetAlarmMovementDetected() {
   sprintf(requestStringBuffer, requestPattern, operation);
   wifi.httpGet(requestStringBuffer, serverName, port);
 }
+
 
