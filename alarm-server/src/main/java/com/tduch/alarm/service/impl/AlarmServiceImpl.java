@@ -1,0 +1,113 @@
+package com.tduch.alarm.service.impl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.tduch.alarm.conf.AppProperties;
+import com.tduch.alarm.conf.EmailParameters;
+import com.tduch.alarm.conf.SmsParameters;
+import com.tduch.alarm.email.EmailUtil;
+import com.tduch.alarm.holder.AlarmInfoHolder;
+import com.tduch.alarm.service.AlarmService;
+import com.tduch.alarm.service.AlarmStatusService;
+import com.tduch.alarm.sms.SmsUtil;
+
+@Service
+public class AlarmServiceImpl implements AlarmService {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlarmServiceImpl.class);
+	
+	@Autowired
+	private AlarmInfoHolder alarmInfoHolder;
+	
+	@Autowired
+	private AlarmStatusService alarmStatusService;
+	
+	@Autowired
+	private AppProperties appProperties;
+	
+	public void alarmHeartBeat() {
+		LOGGER.info("Alarm heartbeat received.");
+		alarmInfoHolder.setLastHeartBeatTimestamp(System.currentTimeMillis());
+		//enable alarm if heart beats are being received and the alarm server is off.
+		if (!alarmStatusService.isAlarmStatusOn()) {
+			
+			boolean isEnable = alarmInfoHolder.checkIfEnableAlarm();
+			if (isEnable) {
+				enableAlarm();
+			}
+		}
+	}
+
+
+	public void disableAlarm() {
+		LOGGER.info("Alarm disabled.");
+		alarmInfoHolder.clearHeartBeats();
+		alarmStatusService.setAlarmStatus(false);
+	}
+
+
+	public void enableAlarm() {
+		LOGGER.info("Alarm enabled.");
+		alarmInfoHolder.clearHeartBeats();
+		alarmStatusService.setAlarmStatus(true);
+	}
+
+
+	public void detectedMovement() {
+		LOGGER.info("Alarm detected movement!!!");
+		try {
+			SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
+					appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
+			SmsUtil.sendSms(smsParameters, "ALARM: Movement detected in our house!");
+		} catch (Exception e) {
+			LOGGER.error("Could not send SMS.", e);
+		}
+		
+		try {
+			EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
+					appProperties.getEmailFromPassword(), appProperties.getEmailTo());
+			EmailUtil.sendAlarmEmail(emailParameters);
+		} catch (Exception e) {
+			LOGGER.error("Could not send email.", e);
+		}
+	}
+
+
+	public boolean isAlarmEnabled() {
+		return alarmStatusService.isAlarmStatusOn();
+		//return alarmInfoHolder.isAlarmOn();
+	}
+
+
+	public boolean test() {
+		LOGGER.info("Test if communication is connected.");
+		return true;
+	}
+
+
+	public void processVoltage(double currentVolts) {
+		LOGGER.info("Alarm process voltage: " + currentVolts + "V.");
+		if (currentVolts < 6.0) {
+			//sends SMS
+			try {
+				SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
+						appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
+				SmsUtil.sendSms(smsParameters, "WARN: ESP batteries are low !" + currentVolts + " V.");
+			} catch (Exception e) {
+				LOGGER.error("Could not send SMS.", e);
+			}			
+		}
+		
+//		try {
+//			EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
+//					appProperties.getEmailFromPassword(), appProperties.getEmailTo());
+//			EmailUtil.sendAlarmEmail(emailParameters);
+//		} catch (Exception e) {
+//			LOGGER.error("Could not send email.", e);
+//		}
+	}
+
+}
