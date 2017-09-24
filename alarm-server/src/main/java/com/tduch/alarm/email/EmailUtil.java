@@ -35,9 +35,11 @@ public final class EmailUtil {
 	/**
 	 * Sends email when the alarm stops pinging the server. Probably battery is off, or the alarm is broken.
 	 */
-	public static void sendWarningEmail(EmailParameters emailParameters) {
+	public static void sendWarningEmail(EmailParameters emailParameters, long lastHeartBeatTimestamp) {
 		LOGGER.info("The warning email is being sent.");
-		sendEmail(emailParameters, "Alarm stop answering.", "Alarm is off. Probably battery is low, or the alarm is broken. Check that!");
+		sendEmail(emailParameters, "Alarm stopped transmitting.",
+				"Alarm is off. Probably heartbeat not received, or the alarm is broken. Check that! Last heartbeat timestamp receiced at:"
+						+ lastHeartBeatTimestamp);
 	}
 		
 

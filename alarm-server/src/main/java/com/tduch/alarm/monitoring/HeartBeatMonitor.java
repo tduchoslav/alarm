@@ -26,7 +26,7 @@ public class HeartBeatMonitor {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(HeartBeatMonitor.class);
 
-	private final static int FIXED_INTERVAL = 1800000; //30 min.
+	private final static int FIXED_INTERVAL = 7200000; // 2 hour.
 	
 	@Autowired
 	private AlarmInfoHolder alarmInfoHolder;
@@ -62,7 +62,7 @@ public class HeartBeatMonitor {
 						EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
 								appProperties.getEmailFromPassword(), appProperties.getEmailTo());
 						if (appProperties.isEmailEnable()) {
-							EmailUtil.sendAlarmEmail(emailParameters);
+							EmailUtil.sendWarningEmail(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());
 							LOGGER.info("Sending email...");
 						}
 					} catch (Exception e) {
