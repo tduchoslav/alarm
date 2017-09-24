@@ -2,12 +2,17 @@ app.name=Alarm server
 app.description=${app.name} is a Spring Boot application
 
 #email
-app.email.from=
-app.email.from.password=
+app.email.enable=false
+app.email.from.1=
+app.email.from.password.1=
+app.email.to.1=
 
-app.email.to=
+app.email.from.2=
+app.email.from.password.2=
+app.email.to.2=
 
 #sms
+app.sms.enable=false
 app.sms.account.sid=
 app.sms.account.auth.token=
 app.phone.number.to=

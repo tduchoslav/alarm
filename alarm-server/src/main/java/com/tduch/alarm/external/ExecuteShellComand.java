@@ -8,9 +8,8 @@ public class ExecuteShellComand {
 	public static void main(String[] args) {
 
 		ExecuteShellComand obj = new ExecuteShellComand();
-//TODO move to the config file!!!
 		String subject = "test subject 2";
-		String emailTo = "tomas.duchoslav@email.cz";
+		String emailTo = "duchalarm2@gmail.com";
 		String content = "hello content";
 		
 		//String[] command = {"/bin/sh", "-c", "echo 'hello'|mail -s " + subject  + " " + emailTo};

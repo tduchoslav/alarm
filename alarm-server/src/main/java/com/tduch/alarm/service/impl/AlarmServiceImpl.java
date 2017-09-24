@@ -58,27 +58,33 @@ public class AlarmServiceImpl implements AlarmService {
 
 	public void detectedMovement() {
 		LOGGER.info("Alarm detected movement!!!");
-		try {
-			SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
-					appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
-			SmsUtil.sendSms(smsParameters, "ALARM: Movement detected in our house!");
-		} catch (Exception e) {
-			LOGGER.error("Could not send SMS.", e);
+		if (appProperties.isSmsEnable()) {
+			try {
+				SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
+						appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
+				if (appProperties.isSmsEnable()) {
+					SmsUtil.sendSms(smsParameters, "ALARM: Movement detected in our house!");
+				}
+			} catch (Exception e) {
+				LOGGER.error("Could not send SMS.", e);
+			}
 		}
-		
-		try {
-			EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
-					appProperties.getEmailFromPassword(), appProperties.getEmailTo());
-			EmailUtil.sendAlarmEmail(emailParameters);
-		} catch (Exception e) {
-			LOGGER.error("Could not send email.", e);
+		if (appProperties.isEmailEnable()) {
+			try {
+				EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
+						appProperties.getEmailFromPassword(), appProperties.getEmailTo());
+				if (appProperties.isEmailEnable()) {
+					EmailUtil.sendAlarmEmail(emailParameters);
+				}
+			} catch (Exception e) {
+				LOGGER.error("Could not send email.", e);
+			}
 		}
 	}
 
 
 	public boolean isAlarmEnabled() {
 		return alarmStatusService.isAlarmStatusOn();
-		//return alarmInfoHolder.isAlarmOn();
 	}
 
 
@@ -91,23 +97,28 @@ public class AlarmServiceImpl implements AlarmService {
 	public void processVoltage(double currentVolts) {
 		LOGGER.info("Alarm process voltage: " + currentVolts + "V.");
 		if (currentVolts < 6.0) {
-			//sends SMS
-			try {
-				SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
-						appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
-				SmsUtil.sendSms(smsParameters, "WARN: ESP batteries are low !" + currentVolts + " V.");
-			} catch (Exception e) {
-				LOGGER.error("Could not send SMS.", e);
-			}			
+			//send email
+			if (appProperties.isEmailEnable()) {
+				try {
+					EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
+							appProperties.getEmailFromPassword(), appProperties.getEmailTo());
+					EmailUtil.sendAlarmEmail(emailParameters);
+				} catch (Exception e) {
+					LOGGER.error("Could not send email.", e);
+				}
+			}
+			if (appProperties.isSmsEnable()) {
+				//sends SMS
+				try {
+					SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
+							appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
+					SmsUtil.sendSms(smsParameters, "WARN: ESP batteries are low !" + currentVolts + " V.");
+				} catch (Exception e) {
+					LOGGER.error("Could not send SMS.", e);
+				}			
+			}
 		}
 		
-//		try {
-//			EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
-//					appProperties.getEmailFromPassword(), appProperties.getEmailTo());
-//			EmailUtil.sendAlarmEmail(emailParameters);
-//		} catch (Exception e) {
-//			LOGGER.error("Could not send email.", e);
-//		}
 	}
 
 }
