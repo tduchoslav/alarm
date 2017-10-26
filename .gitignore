@@ -1,0 +1,7 @@
+.classpath
+.project
+.settings/
+target/
+classes
+alarm-server/src/main/resources/application.properties
+alarm-server/src/main/resources/database.properties

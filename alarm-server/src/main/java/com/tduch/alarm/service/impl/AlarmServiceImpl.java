@@ -10,6 +10,7 @@ import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
 import com.tduch.alarm.email.EmailUtil;
 import com.tduch.alarm.holder.AlarmInfoHolder;
+import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
 import com.tduch.alarm.service.AlarmStatusService;
 import com.tduch.alarm.sms.SmsUtil;
@@ -24,6 +25,9 @@ public class AlarmServiceImpl implements AlarmService {
 	
 	@Autowired
 	private AlarmStatusService alarmStatusService;
+	
+	@Autowired
+	private AlarmEmailInfoService alarmEmailInfoService;
 	
 	@Autowired
 	private AppProperties appProperties;
@@ -71,8 +75,15 @@ public class AlarmServiceImpl implements AlarmService {
 		}
 		if (appProperties.isEmailEnable()) {
 			try {
-				EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
+				EmailParameters emailParameters = null;
+				if (alarmEmailInfoService.getSentEmailsCountInCurrentMonth() < appProperties.getMaxNumEmailsPerMonth()) {
+					emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
 						appProperties.getEmailFromPassword(), appProperties.getEmailTo());
+				} else {
+					//max limit exceeded, send email to backup email
+					emailParameters = new EmailParameters(appProperties.getEmailFrom2(), 
+							appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
+				}
 				if (appProperties.isEmailEnable()) {
 					EmailUtil.sendAlarmEmail(emailParameters);
 				}

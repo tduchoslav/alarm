@@ -11,6 +11,9 @@ app.email.from.2=
 app.email.from.password.2=
 app.email.to.2=
 
+#google allows to send max 10 sms for emails per month.
+app.email.max.per.month = 10
+
 #sms
 app.sms.enable=false
 app.sms.account.sid=

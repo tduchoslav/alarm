@@ -27,6 +27,9 @@ public class AppProperties {
 	@Value("${app.email.to.2}")
 	private String emailTo2;
 	
+	@Value("${app.email.max.per.month}")
+	private Integer maxNumEmailsPerMonth;
+	
 	@Value("${app.sms.enable}")
 	private boolean smsEnable;
 	
@@ -90,6 +93,14 @@ public class AppProperties {
 
 	public boolean isSmsEnable() {
 		return smsEnable;
+	}
+
+	public Integer getMaxNumEmailsPerMonth() {
+		//if no limit is defined in property file, return unlimited value
+		if (maxNumEmailsPerMonth == null || maxNumEmailsPerMonth == 0) {
+			return 99999999;
+		}
+		return maxNumEmailsPerMonth;
 	}
 
 	
