@@ -22,6 +22,8 @@ public final class AlarmInfoHolder {
 	
 	private int sentCount = 0;
 	
+	private Long lastDetectedMovementInfoTimestamp;
+	
 	public AlarmInfoHolder() {
 		
 	}
@@ -73,6 +75,30 @@ public final class AlarmInfoHolder {
 			}
 		}
 		return false;
+	}
+	
+	
+	public Long getLastDetectedMovementInfoTimestamp() {
+		return lastDetectedMovementInfoTimestamp;
+	}
+
+
+	public void setLastDetectedMovementInfoTimestamp(Long lastDetectedMovementInfoTimestamp) {
+		this.lastDetectedMovementInfoTimestamp = lastDetectedMovementInfoTimestamp;
+	}
+	public void resetDetectedMovementInfoTimestamp() {
+		setLastDetectedMovementInfoTimestamp(null);
+	}
+
+
+	/**
+	 * If lastDetectedMovementInfoTimestamp is not null, return false,
+	 * which means that the alarm has not been deactivated yet.
+	 * @return
+	 */
+	public boolean checkIfAlarmDeactivated() {
+		LOGGER.debug("last alarm detected movement info: {} ", lastDetectedMovementInfoTimestamp);
+		return (getLastDetectedMovementInfoTimestamp() == null) ? true : false;
 	}
 	
 }

@@ -11,6 +11,7 @@ import com.tduch.alarm.conf.SmsParameters;
 import com.tduch.alarm.email.EmailUtil;
 import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 import com.tduch.alarm.holder.AlarmInfoHolder;
+import com.tduch.alarm.monitoring.DetectedMovementMonitor;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
 import com.tduch.alarm.service.AlarmStatusService;
@@ -29,6 +30,9 @@ public class AlarmServiceImpl implements AlarmService {
 	
 	@Autowired
 	private AlarmEmailInfoService alarmEmailInfoService;
+	
+	@Autowired
+	private DetectedMovementMonitor detectedMovementMonitor;
 	
 	@Autowired
 	private AppProperties appProperties;
@@ -51,6 +55,7 @@ public class AlarmServiceImpl implements AlarmService {
 		LOGGER.info("Alarm disabled.");
 		alarmInfoHolder.clearHeartBeats();
 		alarmStatusService.setAlarmStatus(false);
+		alarmInfoHolder.resetDetectedMovementInfoTimestamp();
 	}
 
 
@@ -96,6 +101,7 @@ public class AlarmServiceImpl implements AlarmService {
 				LOGGER.error("Could not send email.", e);
 			}
 		}
+		alarmInfoHolder.resetDetectedMovementInfoTimestamp();
 	}
 
 
@@ -135,6 +141,12 @@ public class AlarmServiceImpl implements AlarmService {
 			}
 		}
 		
+	}
+
+	public void detectedMovementInfo() {
+		LOGGER.info("Movement Info detected.");
+		alarmInfoHolder.setLastDetectedMovementInfoTimestamp(System.currentTimeMillis());
+		detectedMovementMonitor.checkMovementInfo();
 	}
 
 }
