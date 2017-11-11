@@ -20,14 +20,7 @@ public final class AlarmInfoHolder {
 	
 	private List<Long> allHeartBeatTimestamps =  new LinkedList<Long>();
 	
-	//private boolean isAlarmOn = false;
-	
 	private int sentCount = 0;
-	
-//	@PostConstruct
-//    public void infoPostConstruct() {
-//         System.out.println("I am initalized!" + this);
-//    }
 	
 	public AlarmInfoHolder() {
 		
@@ -45,13 +38,7 @@ public final class AlarmInfoHolder {
 	}
 
 
-//	public boolean isAlarmOn() {
-//		return isAlarmOn;
-//	}
-
-
-	public void clearHeartBeats(/*boolean isAlarmOn*/) {
-		//this.isAlarmOn = isAlarmOn;
+	public void clearHeartBeats() {
 		allHeartBeatTimestamps.clear();
 		lastHeartBeatTimestamp = System.currentTimeMillis();
 		sentCount = 0;

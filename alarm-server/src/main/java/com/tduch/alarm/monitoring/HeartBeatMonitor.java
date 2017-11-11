@@ -12,6 +12,7 @@ import com.tduch.alarm.conf.AppProperties;
 import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
 import com.tduch.alarm.email.EmailUtil;
+import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
@@ -73,7 +74,15 @@ public class HeartBeatMonitor {
 									appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
 						}
 						if (appProperties.isEmailEnable()) {
-							EmailUtil.sendWarningEmail(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());
+							if (alarmInfoHolder.getSentCount() >= 1) { 
+								EmailUtil.sendWarningEmailNoSms(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());
+							} else {
+								AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
+								emailInfoEtity.setEmailInfo("heart beat warning");
+								emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
+								alarmEmailInfoService.insert(emailInfoEtity);
+								EmailUtil.sendWarningEmail(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());	
+							}	
 							LOGGER.info("Sending email...");
 						}
 					} catch (Exception e) {

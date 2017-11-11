@@ -4,7 +4,7 @@ import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 
 public interface AlarmEmailInfoService {
 
-	AlarmEmailInfoEntity insert(AlarmEmailInfoEntity status);
+	AlarmEmailInfoEntity insert(AlarmEmailInfoEntity emailInfo);
 	
 	AlarmEmailInfoEntity findById(int id);
     

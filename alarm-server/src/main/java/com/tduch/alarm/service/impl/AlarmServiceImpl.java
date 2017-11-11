@@ -9,6 +9,7 @@ import com.tduch.alarm.conf.AppProperties;
 import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
 import com.tduch.alarm.email.EmailUtil;
+import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
@@ -35,7 +36,7 @@ public class AlarmServiceImpl implements AlarmService {
 	public void alarmHeartBeat() {
 		LOGGER.info("Alarm heartbeat received.");
 		alarmInfoHolder.setLastHeartBeatTimestamp(System.currentTimeMillis());
-		//enable alarm if heart beats are being received and the alarm server is off.
+		//enable alarm if heart beats are being received and the alarm server have been down for some time.
 		if (!alarmStatusService.isAlarmStatusOn()) {
 			
 			boolean isEnable = alarmInfoHolder.checkIfEnableAlarm();
@@ -85,6 +86,10 @@ public class AlarmServiceImpl implements AlarmService {
 							appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
 				}
 				if (appProperties.isEmailEnable()) {
+					AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
+					emailInfoEtity.setEmailInfo("movement detected warning.");
+					emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
+					alarmEmailInfoService.insert(emailInfoEtity);
 					EmailUtil.sendAlarmEmail(emailParameters);
 				}
 			} catch (Exception e) {
