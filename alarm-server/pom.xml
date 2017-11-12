@@ -66,12 +66,6 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		 
-		<dependency>
-    		<groupId>ch.qos.logback</groupId>
-    		<artifactId>logback-classic</artifactId>
-    		<version>1.2.1</version>
-		</dependency>
 		
 		<dependency>
    			<groupId>javax.mail</groupId>
