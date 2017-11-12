@@ -132,4 +132,9 @@ public class AlarmServiceImpl implements AlarmService {
 		
 	}
 
+	public String getLogs() {
+		// TODO Auto-generated method stub
+		return "TODO";
+	}
+
 }

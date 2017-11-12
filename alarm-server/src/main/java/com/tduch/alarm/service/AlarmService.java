@@ -47,4 +47,11 @@ public interface AlarmService {
 	 */
 	void processVoltage(double currentVolts);
 
+	/**
+	 * Returns last logging info from the server
+	 * 
+	 * @return
+	 */
+	String getLogs();
+
 }

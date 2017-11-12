@@ -95,4 +95,11 @@ public class AlarmServiceRest {
 		return new TestResponse("test");
 	}
 
+	@RequestMapping(value = { "/alarmLogsRest", "/logs" })
+	public String alarmLogs() {
+		String logs = alarmService.getLogs();
+		TestResponse testResponse = new TestResponse(logs);
+		return testResponse.getTest();
+	}
+
 }
