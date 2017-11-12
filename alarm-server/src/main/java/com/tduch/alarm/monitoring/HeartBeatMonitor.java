@@ -12,6 +12,7 @@ import com.tduch.alarm.conf.AppProperties;
 import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
 import com.tduch.alarm.email.EmailUtil;
+import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
@@ -41,14 +42,14 @@ public class HeartBeatMonitor {
 	@Autowired
 	private AppProperties appProperties;
 	
-	@Scheduled(fixedDelay = FIXED_INTERVAL)
+	@Scheduled(fixedDelay = FIXED_INTERVAL, initialDelay = 1800000)
 	public void scheduleAlarmCheck() {
 		LOGGER.info("Monitoring of the heart beats started.");
 		if (!alarmService.isAlarmEnabled()) {
 			LOGGER.info("Alarm is switched off, do not check anything.");
 		} else {
 			if ((System.currentTimeMillis() - FIXED_INTERVAL) > alarmInfoHolder.getLastHeartBeatTimestamp()) {
-				LOGGER.warn("Last heartbeat noticed at {}. Probably the alarm is dead.", alarmInfoHolder.getLastHeartBeatTimestamp());
+				LOGGER.info("Last heartbeat noticed at {}. Probably the alarm is dead.", alarmInfoHolder.getLastHeartBeatTimestamp());
 				//trigger message, but max. 3 times, then switch off the alarm
 				if (alarmInfoHolder.getSentCount() <= 3) {
 					alarmInfoHolder.addCount();
@@ -73,7 +74,15 @@ public class HeartBeatMonitor {
 									appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
 						}
 						if (appProperties.isEmailEnable()) {
-							EmailUtil.sendWarningEmail(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());
+							if (alarmInfoHolder.getSentCount() >= 1) { 
+								EmailUtil.sendWarningEmailNoSms(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());
+							} else {
+								AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
+								emailInfoEtity.setEmailInfo("heart beat warning");
+								emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
+								alarmEmailInfoService.insert(emailInfoEtity);
+								EmailUtil.sendWarningEmail(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());	
+							}	
 							LOGGER.info("Sending email...");
 						}
 					} catch (Exception e) {

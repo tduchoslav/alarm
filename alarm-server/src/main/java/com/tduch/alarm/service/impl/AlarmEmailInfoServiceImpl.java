@@ -21,8 +21,8 @@ public class AlarmEmailInfoServiceImpl implements AlarmEmailInfoService {
 	@Autowired
     private AlarmEmailInfoRepository alarmEmailInfoRepository;
 	
-	public AlarmEmailInfoEntity insert(AlarmEmailInfoEntity status) {
-		return alarmEmailInfoRepository.save(status);
+	public AlarmEmailInfoEntity insert(AlarmEmailInfoEntity emailInfo) {
+		return alarmEmailInfoRepository.save(emailInfo);
 	}
 
 	public AlarmEmailInfoEntity findById(int id) {
@@ -33,9 +33,10 @@ public class AlarmEmailInfoServiceImpl implements AlarmEmailInfoService {
 		LocalDate today = new LocalDate();
 		DateTime dateFrom = today.withDayOfMonth(1).toDateTimeAtStartOfDay();
 		DateTime dateTo = today.plusMonths(1).withDayOfMonth(1).toDateTimeAtStartOfDay();
-		LOGGER.debug("Date from -to {} - {}", dateFrom, dateTo);
-		List<AlarmEmailInfoEntity> recordsInPeriod = alarmEmailInfoRepository.getRecordsInPeriod(dateFrom.toDate(), dateTo.toDate());
+		LOGGER.debug("Date from {} to {}", dateFrom, dateTo);
+		List<AlarmEmailInfoEntity> recordsInPeriod = alarmEmailInfoRepository.getRecordsInPeriod(dateFrom.toInstant().getMillis(), dateTo.toInstant().getMillis());
 		if (recordsInPeriod != null) {
+			LOGGER.debug("Records in period: {}", recordsInPeriod.size());
 			return recordsInPeriod.size();
 		}
 		return 0;

@@ -48,6 +48,11 @@ public interface AlarmService {
 	void processVoltage(double currentVolts);
 
 	/**
+	 * Receives info about movement from the alarm arduino.
+	 */
+	void detectedMovementInfo();
+
+	/**
 	 * Returns last logging info from the server
 	 * 
 	 * @return

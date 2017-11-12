@@ -25,6 +25,12 @@ public class EmailParameters {
 	public String getEmailTo() {
 		return emailTo;
 	}
+
+	@Override
+	public String toString() {
+		return "EmailParameters [emailFrom=" + emailFrom + ", emailFromPassword=" + emailFromPassword + ", emailTo="
+				+ emailTo + "]";
+	}
 	
 	
 	

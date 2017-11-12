@@ -41,9 +41,20 @@ public final class EmailUtil {
 				"Alarm is off. Probably heartbeat not received, or the alarm is broken. Check that! Last heartbeat timestamp receiced at:"
 						+ lastHeartBeatTimestamp);
 	}
+	
+	/**
+	 * Sends email when the alarm stops pinging the server. Probably battery is off, or the alarm is broken.
+	 */
+	public static void sendWarningEmailNoSms(EmailParameters emailParameters, long lastHeartBeatTimestamp) {
+		LOGGER.info("The warning email is being sent.");
+		sendEmail(emailParameters, "Alarm stopped transmitting - no sms.",
+				"Alarm is off. Probably heartbeat not received, or the alarm is broken. Check that! Last heartbeat timestamp receiced at:"
+						+ lastHeartBeatTimestamp);
+	}
 		
 
 	private static void sendEmail(EmailParameters emailParameters, String subject, String content) {
+		LOGGER.debug("sent email to: {}, subject: {}, content: {}", emailParameters, subject, content);
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 	    mailSender.setHost("smtp.gmail.com");
 	    mailSender.setPort(587);

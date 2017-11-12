@@ -62,10 +62,12 @@ public class AlarmServiceRest {
 	//@RequestMapping("/alarmMovementDetectedInfoRest")
 	@RequestMapping(value={"/alarmMovementDetectedInfoRest", "/movementInfo"})
 	public AlarmMovementDetectedResponse alarmMovementDetectedInfo() {
-		//TODO alarm HW detects movement and immediately sends request to the server
-		// when the server receives this request and then no other request comes it means, that something happen
-		//and must send warning to via sms
-		//alarmService.detectedMovementInfo();
+		/*
+		 * alarm HW detects movement and immediately sends request to the server
+		 * when the server receives this request and then no other request comes it means, that something happen
+		 * and must send warning to via sms
+		 */
+		alarmService.detectedMovementInfo();
 		return new AlarmMovementDetectedResponse();
 	}
 	
