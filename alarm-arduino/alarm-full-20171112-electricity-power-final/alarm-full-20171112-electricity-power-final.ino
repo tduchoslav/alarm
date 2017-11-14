@@ -191,8 +191,9 @@ void loop() {
       //if (strcmp(rightPassword, inputPassword) == 0) {
         Serial.print(F("inpuPassword equals to the correct password: "));
         Serial.println(inputPassword);
-        simpleTimer.disable(countdownTimerId);
-        Serial.println();Serial.print(F("DEACTIVATION: "));Serial.print(F(" Timer countdownTimerId (")); Serial.print(countdownTimerId); Serial.print(F(") has been disabled by given correct password at ")); Serial.print(millis()/1000);Serial.print(F(" sec."));
+        simpleTimer.deleteTimer(countdownTimerId);
+        isCountdownTimerRunning = false;
+        Serial.println();Serial.print(F("DEACTIVATION: "));Serial.print(F(" Timer countdownTimerId (")); Serial.print(countdownTimerId); Serial.print(F(") has been deleted by given correct password at ")); Serial.print(millis()/1000);Serial.print(F(" sec."));
         
         inputPassword = "x"; //workaround in order to not execute the disabling all the time
         //inputPassword[0] = 0;
@@ -205,7 +206,7 @@ void loop() {
         isRedLedOn = false;
 
         isMovementDetectedInfoSent = false;
-
+        
         //stop alarm server monitoring
         httpGetAlarmStop();        
         
@@ -282,7 +283,6 @@ void runAlarm() {
     simpleTimer.deleteTimer(blinkGreeLedTimerId);
 
     isCountdownTimerRunning = false;
-
 
     //stop alarm server monitoring
     httpGetAlarmStop();        
@@ -524,7 +524,7 @@ boolean sendHttpGetRequest(char* request, String serverIp, int port) {
 
   //send request
   bool isSent = sendHttpGet(request, serverIp, port);
-  
+ 
   //try to send once more
   if (!isSent) {
     delay(100);
@@ -540,7 +540,7 @@ boolean sendHttpGetRequest(char* request, String serverIp, int port) {
         hardRestartWifi();
       }
     }
-  }
+  }   
   
   if (isSent) {
     isHardRestartWifi = false;
