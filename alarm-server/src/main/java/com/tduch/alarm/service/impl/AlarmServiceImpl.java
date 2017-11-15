@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import com.tduch.alarm.conf.AppProperties;
 import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
+import com.tduch.alarm.dto.AlarmEmailInfoDto;
 import com.tduch.alarm.email.EmailUtil;
-import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.monitoring.DetectedMovementMonitor;
 import com.tduch.alarm.service.AlarmEmailInfoService;
@@ -91,10 +91,13 @@ public class AlarmServiceImpl implements AlarmService {
 							appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
 				}
 				if (appProperties.isEmailEnable()) {
-					AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
-					emailInfoEtity.setEmailInfo("movement detected warning.");
-					emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
-					alarmEmailInfoService.insert(emailInfoEtity);
+//					AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
+//					emailInfoEtity.setEmailInfo("movement detected warning.");
+//					emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
+					AlarmEmailInfoDto emailInfoDto = new AlarmEmailInfoDto();
+					emailInfoDto.setEmailInfo("Movement detected warning.");
+					emailInfoDto.setSentTmstmp(System.currentTimeMillis());
+					alarmEmailInfoService.insert(emailInfoDto);
 					EmailUtil.sendAlarmEmail(emailParameters);
 				}
 			} catch (Exception e) {
@@ -106,7 +109,9 @@ public class AlarmServiceImpl implements AlarmService {
 
 
 	public boolean isAlarmEnabled() {
-		return alarmStatusService.isAlarmStatusOn();
+		boolean isAlarmOn = alarmStatusService.isAlarmStatusOn();
+		LOGGER.info("Alarm is {}", isAlarmOn);
+		return isAlarmOn;
 	}
 
 

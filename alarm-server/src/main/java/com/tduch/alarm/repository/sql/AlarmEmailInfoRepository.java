@@ -1,4 +1,4 @@
-package com.tduch.alarm.repository;
+package com.tduch.alarm.repository.sql;
 
 import java.util.List;
 
@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.tduch.alarm.entity.AlarmEmailInfoEntity;
+import com.tduch.alarm.entity.sql.AlarmEmailInfoEntity;
 
 @Repository
 public interface AlarmEmailInfoRepository extends JpaRepository<AlarmEmailInfoEntity, Integer> {
 
 	@Query("SELECT e FROM AlarmEmailInfoEntity e WHERE e.sentTmstmp > :dateFrom AND e.sentTmstmp < :dateTo")
-	public List<AlarmEmailInfoEntity> getRecordsInPeriod(@Param("dateFrom") Long dateFrom, @Param("dateTo") long dateTo);
+	public List<AlarmEmailInfoEntity> getRecordsInPeriod(@Param("dateFrom") Long dateFrom, @Param("dateTo") Long dateTo);
 }

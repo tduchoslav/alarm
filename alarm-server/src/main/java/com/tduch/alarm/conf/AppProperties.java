@@ -3,6 +3,8 @@ package com.tduch.alarm.conf;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.tduch.alarm.datasource.DatasourceType;
+
 @Component
 public class AppProperties {
 
@@ -45,6 +47,8 @@ public class AppProperties {
 	@Value("${app.phone.number.from}")
 	private String phoneNumberFrom;
 	
+	@Value("${app.datasource.type}")
+	private String datasourceType;
 	
 
 	public String getEmailFrom() {
@@ -104,4 +108,12 @@ public class AppProperties {
 	}
 
 	
+	public String getDatasourceType() {
+		return datasourceType;
+	}
+
+	public boolean isMongoDatasource() {
+		return (DatasourceType.MONGODB == DatasourceType.findByName(getDatasourceType())) ? true : false;
+	}
+
 }

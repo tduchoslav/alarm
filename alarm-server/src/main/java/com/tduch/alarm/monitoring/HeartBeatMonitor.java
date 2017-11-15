@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.tduch.alarm.conf.AppProperties;
 import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
+import com.tduch.alarm.dto.AlarmEmailInfoDto;
 import com.tduch.alarm.email.EmailUtil;
-import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
@@ -77,10 +77,14 @@ public class HeartBeatMonitor {
 							if (alarmInfoHolder.getSentCount() >= 1) { 
 								EmailUtil.sendWarningEmailNoSms(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());
 							} else {
-								AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
-								emailInfoEtity.setEmailInfo("heart beat warning");
-								emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
-								alarmEmailInfoService.insert(emailInfoEtity);
+//								AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
+//								emailInfoEtity.setEmailInfo("heart beat warning");
+//								emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
+//								alarmEmailInfoService.insert(emailInfoEtity);
+								AlarmEmailInfoDto emailInfoDto = new AlarmEmailInfoDto();
+								emailInfoDto.setEmailInfo("Heart beat warning.");
+								emailInfoDto.setSentTmstmp(System.currentTimeMillis());
+								alarmEmailInfoService.insert(emailInfoDto);
 								EmailUtil.sendWarningEmail(emailParameters, alarmInfoHolder.getLastHeartBeatTimestamp());	
 							}	
 							LOGGER.info("Sending email...");

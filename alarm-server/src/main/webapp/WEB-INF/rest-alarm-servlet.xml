@@ -5,6 +5,7 @@
 	xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -17,7 +18,9 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/jdbc     
-        http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd">
+        http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd
+       	http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd">
 
        <!-- <import resource="applicationContext.xml"/>-->
 
@@ -31,10 +34,10 @@
 		<context:component-scan base-package="com.tduch.alarm.restservice" />
 		<context:component-scan base-package="com.tduch.alarm.service" />
 		
-		<jpa:repositories base-package="com.tduch.alarm.repository"/>
+		<jpa:repositories base-package="com.tduch.alarm.repository.sql"/>
     	
     	
-    	<context:property-placeholder location="classpath:application.properties, classpath:database.properties" />
+    	<context:property-placeholder location="classpath:application.properties, classpath:database-sql.properties, classpath:database-mongodb.properties" />
 
 		<bean class="org.apache.commons.dbcp2.BasicDataSource" id="dataSource">
     		<property name="driverClassName" value="${jdbc.driverClassName}" />
@@ -68,9 +71,33 @@
         </bean>
 	  
 		<jdbc:initialize-database data-source="dataSource">
-    		<jdbc:script location="classpath:db/create-db-if-not-exists.sql" />
+    		<jdbc:script location="classpath:db/create-hsql-db-if-not-exists.sql" />
 		</jdbc:initialize-database>
 		
+		<!-- mongodb setup -->
+		<!-- <mongo:mongo-client id = "mongo" host="${mongodb.host}" port="${mongodb.port}" /> -->
+		<mongo:mongo-client id = "mongo" host="localhost" port="27017" />
+		<!-- <mongo:db-factory dbname="${mongodb.dbName}" /> -->
+
+		<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+			<!-- <constructor-arg name="mongoDbFactory" ref="mongoDbFactory" /> -->
+			<constructor-arg name = "mongoClient" ref="mongo" />
+    		<!-- <constructor-arg name = "databaseName" value="${mongodb.dbName}" />-->
+    		<constructor-arg name = "databaseName" value="alarmdb" />
+		</bean>
+		
+		<mongo:repositories base-package="com.tduch.alarm.repository.mongodb" mongo-template-ref="mongoTemplate"/>
+		
+		<!-- 
+		 <mongo:mongo id="mongo" host="localhost" port="27018"/>
+
+  <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+    <constructor-arg ref="mongo" />
+    <constructor-arg value="mydb" />
+  </bean>
+
+  <mongo:repositories base-package="core.repository" mongo-template-ref="mongoTemplate"/>
+   -->		
     
 		<task:annotation-driven/>
 		

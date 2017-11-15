@@ -9,7 +9,8 @@
   
   <properties>
         <java.version>1.8</java.version>
-        <spring.version>4.3.5.RELEASE</spring.version>
+        <spring.version>5.0.1.RELEASE</spring.version>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
   
   <dependencies>
@@ -89,8 +90,14 @@
 		<dependency>
     		<groupId>org.springframework.data</groupId>
     		<artifactId>spring-data-jpa</artifactId>
-    		<version>1.11.7.RELEASE</version>
+    		<version>2.0.1.RELEASE</version>
 		</dependency>
+		<dependency>
+    		<groupId>org.springframework.data</groupId>
+        	<artifactId>spring-data-mongodb</artifactId>
+        	<version>2.0.1.RELEASE</version>
+		</dependency>
+		
 		<!-- 
 		<dependency>
     		<groupId>org.hibernate.javax.persistence</groupId>
@@ -135,11 +142,33 @@
     		<artifactId>jcl-over-slf4j</artifactId>     
     		<version>1.7.25</version>  
     	</dependency>
+    	 
     	<dependency>
     		<groupId>com.fasterxml.jackson.core</groupId>
     		<artifactId>jackson-core</artifactId>
-    	<version>2.9.1</version>
-</dependency>
+    		<version>2.9.2</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.core</groupId>
+    		<artifactId>jackson-databind</artifactId>
+    		<version>2.9.2</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.core</groupId>
+    		<artifactId>jackson-annotations</artifactId>
+    		<version>2.9.2</version>
+		</dependency>
+		
+		
+		
+		    	
+    	<!-- MongoDB Java Driver -->
+		<dependency>
+    		<groupId>org.mongodb</groupId>
+    		<artifactId>mongo-java-driver</artifactId>
+    		<version>3.5.0</version>
+		</dependency>
+		
 		
   </dependencies> 
 </project>

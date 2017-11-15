@@ -1,6 +1,7 @@
-package com.tduch.alarm.entity;
+package com.tduch.alarm.entity.sql;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ public class AlarmEmailInfoEntity implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	private Integer id;
+	private BigInteger id;
 
 	@Column(name = "sent_tmstmp")
 	private Long sentTmstmp;
@@ -25,11 +26,11 @@ public class AlarmEmailInfoEntity implements Serializable {
 	@Column(name = "email_msg")
 	private String emailInfo;
 
-	public Integer getId() {
+	public BigInteger getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(BigInteger id) {
 		this.id = id;
 	}
 

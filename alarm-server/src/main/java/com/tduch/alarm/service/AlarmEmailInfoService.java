@@ -1,12 +1,12 @@
 package com.tduch.alarm.service;
 
-import com.tduch.alarm.entity.AlarmEmailInfoEntity;
+import com.tduch.alarm.dto.AlarmEmailInfoDto;
 
 public interface AlarmEmailInfoService {
 
-	AlarmEmailInfoEntity insert(AlarmEmailInfoEntity emailInfo);
+	AlarmEmailInfoDto insert(AlarmEmailInfoDto emailInfo);
 	
-	AlarmEmailInfoEntity findById(int id);
+//	AlarmEmailInfoEntity findById(int id);
     
 	/**
 	 * Returns number of the emails sent this month.

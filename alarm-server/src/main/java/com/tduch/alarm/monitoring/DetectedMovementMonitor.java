@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.tduch.alarm.conf.AppProperties;
 import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
+import com.tduch.alarm.dto.AlarmEmailInfoDto;
 import com.tduch.alarm.email.EmailUtil;
-import com.tduch.alarm.entity.AlarmEmailInfoEntity;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.sms.SmsUtil;
@@ -69,10 +69,13 @@ public class DetectedMovementMonitor {
 						appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
 			}
 			if (appProperties.isEmailEnable()) {
-				AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
-				emailInfoEtity.setEmailInfo("movement detected but alarm has not been deactivated.");
-				emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
-				alarmEmailInfoService.insert(emailInfoEtity);
+//				AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
+//				emailInfoEtity.setEmailInfo("movement detected but alarm has not been deactivated.");
+//				emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
+				AlarmEmailInfoDto emailInfoDto = new AlarmEmailInfoDto();
+				emailInfoDto.setEmailInfo("movement detected but alarm has not been deactivated.");
+				emailInfoDto.setSentTmstmp(System.currentTimeMillis());
+				alarmEmailInfoService.insert(emailInfoDto);
 				EmailUtil.sendAlarmEmail(emailParameters);	
 				LOGGER.info("Sending email...");
 			}
