@@ -1,0 +1,6 @@
+First create database 'alarmdb' in the mongodb instance.
+Then import the json files.
+
+
+
+
