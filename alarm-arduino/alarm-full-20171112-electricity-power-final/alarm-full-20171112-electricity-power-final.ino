@@ -42,7 +42,7 @@ const long RED_LED_OFF_TIMER_INTERVAL = 60000; //60 sec.
 const long GREEN_LED_OFF_TIMER_INTERVAL = 65000; //60 sec.
 const long HEART_BEAT_TIMER_INTERVAL = 1200000;// 20 min heartbeat
 const long BLINK_GREEN_LED_TIMER_INTERVAL = 3600000; //1 hour.
-const long ALARM_SERVER_STATUS_CHECKER_TIMER_INTERVAL = 1800000;// 30 min
+const long ALARM_SERVER_STATUS_CHECKER_TIMER_INTERVAL = 300000;// 5 min
 
 byte redledpin = A2;
 byte greenledpin = A3;
