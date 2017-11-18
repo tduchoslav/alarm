@@ -163,6 +163,7 @@ void loop() {
       if (key) {
         inputPassword += key;
         //strcat(inputPassword, key);
+        Serial.println("");
         Serial.print(F("input password: "));
         Serial.println(inputPassword);
       }
@@ -195,7 +196,7 @@ void loop() {
         isCountdownTimerRunning = false;
         Serial.println();Serial.print(F("DEACTIVATION: "));Serial.print(F(" Timer countdownTimerId (")); Serial.print(countdownTimerId); Serial.print(F(") has been deleted by given correct password at ")); Serial.print(millis()/1000);Serial.print(F(" sec."));
         
-        inputPassword = "x"; //workaround in order to not execute the disabling all the time
+        inputPassword = ""; //workaround in order to not execute the disabling all the time
         //inputPassword[0] = 0;
         isDetectorOn = false;
         isGreenLedOn = true;
@@ -590,6 +591,9 @@ void reset() {
  * send http send
  */
 boolean sendHttpGet (char* request, String serverName, int port) {
+  //!!!!!JUST FOR TESTING PURPOSES, DETELE THIS LINE LATER!!!!!
+  //return true;
+  
   //setCwMode();
   //setNewWifi();
   //delay(3000);
