@@ -1,8 +1,11 @@
 package com.tduch.alarm.monitoring;
 
+import javax.mail.MessagingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +14,7 @@ import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
 import com.tduch.alarm.dto.AlarmEmailInfoDto;
 import com.tduch.alarm.email.EmailUtil;
+import com.tduch.alarm.external.ExecuteShellComand;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.sms.SmsUtil;
@@ -76,11 +80,68 @@ public class DetectedMovementMonitor {
 				emailInfoDto.setEmailInfo("movement detected but alarm has not been deactivated.");
 				emailInfoDto.setSentTmstmp(System.currentTimeMillis());
 				alarmEmailInfoService.insert(emailInfoDto);
-				EmailUtil.sendAlarmEmail(emailParameters);	
+				
+				//todo load picture if set to true must be set in config file!!!
+				//todo set directory in the config, file pattern in the config
+				String directory = "/camera-snapshots";
+				StringBuilder imageFileName = new StringBuilder("image_");
+				imageFileName.append(alarmInfoHolder.getLastDetectedMovementInfoTimestamp());
+				imageFileName.append(".jpg");
+				boolean isCamera = true;
+				if (!isCamera) {
+					EmailUtil.sendAlarmEmail(emailParameters);
+				} else {
+					//load file from the disk
+					FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName.toString());
+					try {
+						EmailUtil.sendAlarmEmailWithAttachment(emailParameters, file);
+					} catch (MessagingException e) {
+						LOGGER.error("Could not send the email with picture.", e);
+					}
+				}
+				
+//				EmailUtil.sendAlarmEmail(emailParameters);	
 				LOGGER.info("Sending email...");
 			}
 		} catch (Exception e) {
 			LOGGER.error("Could not send email.", e);
 		}
+	}
+	
+	/**
+	 * Runs shell commands to create picture snapshots from the camera
+	 */
+	@Async
+	public void makePictureSnapshots(long currentTimeMillis) {
+		ExecuteShellComand.stopMotion();
+		//TODO later specify directory where to store the pictures
+		String directory = "/camera-snapshots";
+		StringBuilder imageFileName = new StringBuilder("image_");
+		imageFileName.append(currentTimeMillis);
+		imageFileName.append(".jpg");
+		ExecuteShellComand.snapshotImage(directory, imageFileName.toString());
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+//		//load file from the disk
+////		FileSystemResource file = new FileSystemResource(imageFileName.toString());
+//		FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName.toString());
+//		
+//		//sends email
+//		EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
+//				appProperties.getEmailFromPassword(), appProperties.getEmailTo());
+//		
+//		try {
+//			EmailUtil.sendEmailAttachment(emailParameters, "Pictures from camera", "Camera made picture snapshot.", file);
+//		} catch (MessagingException e) {
+//			LOGGER.error("Could not send the email with picture.", e);
+//		}
+		
+		ExecuteShellComand.startMotion();
 	}
 }

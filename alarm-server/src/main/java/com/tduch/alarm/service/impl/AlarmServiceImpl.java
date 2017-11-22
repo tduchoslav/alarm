@@ -1,8 +1,11 @@
 package com.tduch.alarm.service.impl;
 
+import javax.mail.MessagingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
 import com.tduch.alarm.conf.AppProperties;
@@ -98,7 +101,25 @@ public class AlarmServiceImpl implements AlarmService {
 					emailInfoDto.setEmailInfo("Movement detected warning.");
 					emailInfoDto.setSentTmstmp(System.currentTimeMillis());
 					alarmEmailInfoService.insert(emailInfoDto);
-					EmailUtil.sendAlarmEmail(emailParameters);
+					
+					//todo load picture if set to true must be set in config file!!!
+					//todo set directory in the config, file pattern in the config
+					String directory = "/camera-snapshots";
+					StringBuilder imageFileName = new StringBuilder("image_");
+					imageFileName.append(alarmInfoHolder.getLastDetectedMovementInfoTimestamp());
+					imageFileName.append(".jpg");
+					boolean isCamera = true;
+					if (!isCamera) {
+						EmailUtil.sendAlarmEmail(emailParameters);
+					} else {
+						//load file from the disk
+						FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName.toString());
+						try {
+							EmailUtil.sendAlarmEmailWithAttachment(emailParameters, file);
+						} catch (MessagingException e) {
+							LOGGER.error("Could not send the email with picture.", e);
+						}
+					}
 				}
 			} catch (Exception e) {
 				LOGGER.error("Could not send email.", e);
@@ -150,8 +171,11 @@ public class AlarmServiceImpl implements AlarmService {
 
 	public void detectedMovementInfo() {
 		LOGGER.info("Movement Info detected.");
-		alarmInfoHolder.setLastDetectedMovementInfoTimestamp(System.currentTimeMillis());
+		long currentTimeMillis = System.currentTimeMillis();
+		alarmInfoHolder.setLastDetectedMovementInfoTimestamp(currentTimeMillis);
 		detectedMovementMonitor.checkMovementInfo();
+		//TODO this should take just picture
+		detectedMovementMonitor.makePictureSnapshots(currentTimeMillis);
 	}
 
 	public String getLogs() {
