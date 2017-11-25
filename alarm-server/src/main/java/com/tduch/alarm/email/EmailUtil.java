@@ -108,6 +108,8 @@ public final class EmailUtil {
 		helper.setText(content);
 		if (file.exists()) {
 			helper.addAttachment(file.getFilename(), file);
+		} else {
+			LOGGER.warn("Image file could not be found on the disk {}", file.getPath());
 		}
 		mailSender.send(message);
 	}

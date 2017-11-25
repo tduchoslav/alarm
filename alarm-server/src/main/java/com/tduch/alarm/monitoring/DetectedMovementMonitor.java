@@ -98,10 +98,17 @@ public class DetectedMovementMonitor {
 					} catch (MessagingException e) {
 						LOGGER.error("Could not send the email with picture.", e);
 					}
+					//delete image file
+					String filePath = file.getPath();
+					boolean deleted = file.getFile().delete();
+					if (deleted) {
+						LOGGER.info("The file {} has been deleted", filePath);
+					} else {
+						LOGGER.warn("The file {} could not been deleted", filePath);
+					}
 				}
-				
-//				EmailUtil.sendAlarmEmail(emailParameters);	
-				LOGGER.info("Sending email...");
+					
+				LOGGER.info("Sending email...");			
 			}
 		} catch (Exception e) {
 			LOGGER.error("Could not send email.", e);
@@ -127,20 +134,6 @@ public class DetectedMovementMonitor {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-//		//load file from the disk
-////		FileSystemResource file = new FileSystemResource(imageFileName.toString());
-//		FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName.toString());
-//		
-//		//sends email
-//		EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
-//				appProperties.getEmailFromPassword(), appProperties.getEmailTo());
-//		
-//		try {
-//			EmailUtil.sendEmailAttachment(emailParameters, "Pictures from camera", "Camera made picture snapshot.", file);
-//		} catch (MessagingException e) {
-//			LOGGER.error("Could not send the email with picture.", e);
-//		}
 		
 		ExecuteShellComand.startMotion();
 	}
