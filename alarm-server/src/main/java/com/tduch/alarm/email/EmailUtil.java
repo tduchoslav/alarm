@@ -106,7 +106,9 @@ public final class EmailUtil {
 		helper.setTo(emailParameters.getEmailTo());
 		helper.setSubject(subject);
 		helper.setText(content);
-		helper.addAttachment(file.getFilename(), file);
+		if (file.exists()) {
+			helper.addAttachment(file.getFilename(), file);
+		}
 		mailSender.send(message);
 	}
 

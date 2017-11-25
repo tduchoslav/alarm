@@ -2,6 +2,8 @@
 .project
 .settings/
 target/
+build/
 classes
 alarm-server/src/main/resources/application.properties
 alarm-server/src/main/resources/database.properties
+

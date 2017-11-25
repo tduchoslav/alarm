@@ -1,0 +1,52 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'war'
+
+group = 'com.tduch'
+version = '1.0.2-SNAPSHOT'
+
+description = """alarm-server"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+
+repositories {
+        
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'org.springframework', name: 'spring-core', version:'5.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version:'5.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'5.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context-support', version:'5.0.1.RELEASE'
+    compile(group: 'org.springframework', name: 'spring-context', version:'5.0.1.RELEASE') {
+exclude(module: 'commons-logging')
+    }
+    compile group: 'org.springframework', name: 'spring-tx', version:'5.0.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version:'5.0.1.RELEASE'
+    compile group: 'javax.mail', name: 'mail', version:'1.4'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1'
+    compile(group: 'com.twilio.sdk', name: 'twilio-java-sdk', version:'7.0.0-rc-10') {
+exclude(module: 'jackson-databind')
+exclude(module: 'jackson-core')
+exclude(module: 'jackson-annotations')
+    }
+    compile group: 'org.springframework.data', name: 'spring-data-jpa', version:'2.0.1.RELEASE'
+    compile group: 'org.springframework.data', name: 'spring-data-mongodb', version:'2.0.1.RELEASE'
+    compile group: 'org.hibernate', name: 'hibernate-core', version:'5.2.11.Final'
+    compile group: 'org.hsqldb', name: 'hsqldb', version:'2.3.1'
+    compile group: 'javax.annotation', name: 'javax.annotation-api', version:'1.3.1'
+    compile group: 'org.apache.commons', name: 'commons-dbcp2', version:'2.1.1'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.2.3'
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.25'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version:'2.9.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.9.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version:'2.9.2'
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version:'3.5.0'
+    testCompile group: 'junit', name: 'junit', version:'3.8.1'
+}
