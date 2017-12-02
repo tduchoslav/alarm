@@ -4,6 +4,8 @@
 target/
 build/
 classes
+.gradle/
+bin/
 alarm-server/src/main/resources/application.properties
 alarm-server/src/main/resources/database.properties
 

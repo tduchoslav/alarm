@@ -72,7 +72,7 @@ public class ExecuteShellComand {
 	public static void stopMotion() {
 		//String[] command = {"/bin/sh", "-c", "sudo /etc/init.d/motion stop"};
 		//String command = "sh -c sudo /etc/init.d/motion stop";
-//		String command = "sudo /etc/init.d/motion stop";
+		//String command = "sudo /etc/init.d/motion stop";
 		String command = "/camera-snapshots/stopMotion.sh";
 		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
 		LOGGER.info("executed: {}, output: {}.", command, executeCommand);		

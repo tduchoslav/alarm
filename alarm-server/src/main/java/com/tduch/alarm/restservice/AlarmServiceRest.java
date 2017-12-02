@@ -103,5 +103,7 @@ public class AlarmServiceRest {
 		TestResponse testResponse = new TestResponse(logs);
 		return testResponse.getTest();
 	}
+	
+	
 
 }
