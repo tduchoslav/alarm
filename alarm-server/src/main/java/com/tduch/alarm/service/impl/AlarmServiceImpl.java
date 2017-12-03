@@ -125,6 +125,11 @@ public class AlarmServiceImpl implements AlarmService {
 			}
 		}
 		alarmInfoHolder.resetDetectedMovementInfoTimestamp();
+		
+		//start making snapshot pictures
+		if (appProperties.isCameraEnable()) {
+			snapshotPictures(appProperties.getSnapshotsInterval());
+		}
 	}
 
 
@@ -173,7 +178,6 @@ public class AlarmServiceImpl implements AlarmService {
 		long currentTimeMillis = System.currentTimeMillis();
 		alarmInfoHolder.setLastDetectedMovementInfoTimestamp(currentTimeMillis);
 		detectedMovementMonitor.checkMovementInfo();
-		//TODO this should take just picture
 		detectedMovementMonitor.makePictureSnapshots(currentTimeMillis);
 	}
 
