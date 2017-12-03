@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tduch.alarm.conf.AppProperties;
 import com.tduch.alarm.restservice.response.AlarmMovementDetectedResponse;
 import com.tduch.alarm.restservice.response.AlarmPowerOnOffResponse;
 import com.tduch.alarm.restservice.response.AlarmStatusResponse;
@@ -20,6 +21,9 @@ public class AlarmServiceRest {
 
 	@Autowired
 	private AlarmService alarmService;
+	
+	@Autowired
+	private AppProperties appProperties;
 	
 	private static final String template = "HeartBeat count %s received.";
 	private final AtomicLong counter = new AtomicLong();
@@ -104,6 +108,11 @@ public class AlarmServiceRest {
 		return testResponse.getTest();
 	}
 	
-	
+	@RequestMapping(value={"/alarmSnapshotsPictureRest", "/snapshots"})
+	public String alarmSnapshots() {
+		alarmService.snapshotPictures(appProperties.getSnapshotsInterval());
+		TestResponse testResponse = new TestResponse("SNAPSHOTS_START");
+		return testResponse.getTest();
+	}
 
 }

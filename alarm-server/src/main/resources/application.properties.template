@@ -24,3 +24,12 @@ app.phone.number.from=
 #default datasource is HSQL, but it can work also with the MongoDb
 app.datasource.type=
 #app.datasource.type=mongodb
+
+#snapshot picture directory
+app.camera.enable=true
+app.snapshots.dir=/camera-snapshots/
+app.snapshots.suffix=jpg
+app.snapshots.prefix=image_
+app.snapshots.interval=120000
+
+ 

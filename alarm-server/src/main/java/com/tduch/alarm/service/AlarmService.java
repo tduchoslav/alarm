@@ -59,4 +59,9 @@ public interface AlarmService {
 	 */
 	String getLogs();
 
+	/**
+	 * Starts making snapshots from the web camera, for the given interval
+	 */
+	void snapshotPictures(long snapshotInterval);
+
 }
