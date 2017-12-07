@@ -81,18 +81,15 @@ public class DetectedMovementMonitor {
 				emailInfoDto.setSentTmstmp(System.currentTimeMillis());
 				alarmEmailInfoService.insert(emailInfoDto);
 				
-				//todo load picture if set to true must be set in config file!!!
-				//todo set directory in the config, file pattern in the config
-				String directory = "/camera-snapshots";
-				StringBuilder imageFileName = new StringBuilder("image_");
-				imageFileName.append(alarmInfoHolder.getLastDetectedMovementInfoTimestamp());
-				imageFileName.append(".jpg");
-				boolean isCamera = true;
-				if (!isCamera) {
+				
+				String directory = appProperties.getSnapshotsDir();
+				String imageFileName = ExecuteShellComand.getFileName(appProperties.getSnapshotsPrefix(), 
+						alarmInfoHolder.getLastDetectedMovementInfoTimestamp(), appProperties.getSnapshotsSuffix());
+				if (!appProperties.isCameraEnable()) {
 					EmailUtil.sendAlarmEmail(emailParameters);
 				} else {
 					//load file from the disk
-					FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName.toString());
+					FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName);
 					try {
 						EmailUtil.sendAlarmEmailWithAttachment(emailParameters, file);
 					} catch (MessagingException e) {
@@ -121,17 +118,14 @@ public class DetectedMovementMonitor {
 	@Async
 	public void makePictureSnapshots(long currentTimeMillis) {
 		ExecuteShellComand.stopMotion();
-		//TODO later specify directory where to store the pictures
-		String directory = "/camera-snapshots";
-		StringBuilder imageFileName = new StringBuilder("image_");
-		imageFileName.append(currentTimeMillis);
-		imageFileName.append(".jpg");
-		ExecuteShellComand.snapshotImage(directory, imageFileName.toString());
-		
+		appProperties.getSnapshotsPrefix();
+		String directory = appProperties.getSnapshotsDir();
+		String fileName = ExecuteShellComand.getFileName(appProperties.getSnapshotsPrefix(), 
+									currentTimeMillis, appProperties.getSnapshotsSuffix());
+		ExecuteShellComand.snapshotImage(directory, fileName);	
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		

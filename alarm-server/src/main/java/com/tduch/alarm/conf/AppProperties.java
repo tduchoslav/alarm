@@ -50,6 +50,20 @@ public class AppProperties {
 	@Value("${app.datasource.type}")
 	private String datasourceType;
 	
+	@Value("${app.snapshots.dir}")
+	private String snapshotsDir;
+	
+	@Value("${app.snapshots.suffix}")
+	private String snapshotsSuffix;
+	
+	@Value("${app.snapshots.prefix}")
+	private String snapshotsPrefix;
+	
+	@Value("${app.snapshots.interval}")
+	private Long snapshotsInterval;
+	
+	@Value("${app.camera.enable}")
+	private boolean cameraEnable;
 
 	public String getEmailFrom() {
 		return emailFrom;
@@ -116,4 +130,45 @@ public class AppProperties {
 		return (DatasourceType.MONGODB == DatasourceType.findByName(getDatasourceType())) ? true : false;
 	}
 
+	public String getSnapshotsDir() {
+		return snapshotsDir;
+	}
+
+	public void setSnapshotsDir(String snapshotsDir) {
+		this.snapshotsDir = snapshotsDir;
+	}
+
+	public String getSnapshotsSuffix() {
+		return snapshotsSuffix;
+	}
+
+	public void setSnapshotsSuffix(String snapshotsSuffix) {
+		this.snapshotsSuffix = snapshotsSuffix;
+	}
+
+	public String getSnapshotsPrefix() {
+		return snapshotsPrefix;
+	}
+
+	public void setSnapshotsPrefix(String snapshotsPrefix) {
+		this.snapshotsPrefix = snapshotsPrefix;
+	}
+
+	public boolean isCameraEnable() {
+		return cameraEnable;
+	}
+
+	public void setCameraEnable(boolean cameraEnable) {
+		this.cameraEnable = cameraEnable;
+	}
+
+	public Long getSnapshotsInterval() {
+		return snapshotsInterval;
+	}
+
+	public void setSnapshotsInterval(Long snapshotsInterval) {
+		this.snapshotsInterval = snapshotsInterval;
+	}
+
+	
 }

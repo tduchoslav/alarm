@@ -72,8 +72,8 @@ public class ExecuteShellComand {
 	public static void stopMotion() {
 		//String[] command = {"/bin/sh", "-c", "sudo /etc/init.d/motion stop"};
 		//String command = "sh -c sudo /etc/init.d/motion stop";
-//		String command = "sudo /etc/init.d/motion stop";
-		String command = "/camera-snapshots/stopMotion.sh";
+		String command = "sudo /etc/init.d/motion stop";
+		//String command = "/camera-snapshots/stopMotion.sh";
 		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
 		LOGGER.info("executed: {}, output: {}.", command, executeCommand);		
 	}
@@ -84,10 +84,47 @@ public class ExecuteShellComand {
 	public static void startMotion() {
 //		String[] command = {"/bin/sh", "-c", "sudo /etc/init.d/motion start"};
 //		String command = "sh -c sudo /etc/init.d/motion start";
-		//String command = "sudo /etc/init.d/motion start";
-		String command = "/camera-snapshots/startMotion.sh";
+		String command = "sudo /etc/init.d/motion start";
+		//String command = "/camera-snapshots/startMotion.sh";
 		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
 		LOGGER.info("executed: {}, output: {}.", command, executeCommand);
 	}
 	
+	/**
+	 * Returns file name based on given parameters
+	 */
+	public static String getFileName(String prefix, long timestamp, String suffix) {
+		StringBuilder fileName = new StringBuilder(prefix);
+		fileName.append(timestamp);
+		fileName.append(".");
+		fileName.append(suffix);
+		return fileName.toString();
+	}
+	
+	/**
+	 * Creates subdir for the snapshot images.
+	 */
+	public static void createSnapshotDir(String dirName, long subDirNameTmstmp) {
+		String command = "mkdir " + dirName + subDirNameTmstmp;
+		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
+		LOGGER.info("executed: {}, output: {}.", command, executeCommand);
+	}
+	
+	public static void deleteSnapshotDir(String dirName, long subDirNameTmstmp) {
+		String command = "rm -r " + dirName + subDirNameTmstmp;
+		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
+		LOGGER.info("executed: {}, output: {}.", command, executeCommand);
+	}
+	
+	public static void zipSnapshotDir(String dirName, long subDirNameTmstmp) {
+		String command = "zip -r " + dirName + subDirNameTmstmp + ".zip" + " " + dirName + subDirNameTmstmp;
+		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
+		LOGGER.info("executed: {}, output: {}.", command, executeCommand);
+	}
+
+	public static void changeOwnershipSnapshotDir(String dirName, long subDirNameTmstmp) {
+		String command = "sudo chown motion:motion_users " + dirName + subDirNameTmstmp + ".zip";
+		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
+		LOGGER.info("executed: {}, output: {}.", command, executeCommand);
+	}
 }

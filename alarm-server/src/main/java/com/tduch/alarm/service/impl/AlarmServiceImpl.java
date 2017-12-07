@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.tduch.alarm.conf.AppProperties;
@@ -13,6 +14,7 @@ import com.tduch.alarm.conf.EmailParameters;
 import com.tduch.alarm.conf.SmsParameters;
 import com.tduch.alarm.dto.AlarmEmailInfoDto;
 import com.tduch.alarm.email.EmailUtil;
+import com.tduch.alarm.external.ExecuteShellComand;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.monitoring.DetectedMovementMonitor;
 import com.tduch.alarm.service.AlarmEmailInfoService;
@@ -102,18 +104,15 @@ public class AlarmServiceImpl implements AlarmService {
 					emailInfoDto.setSentTmstmp(System.currentTimeMillis());
 					alarmEmailInfoService.insert(emailInfoDto);
 					
-					//todo load picture if set to true must be set in config file!!!
-					//todo set directory in the config, file pattern in the config
-					String directory = "/camera-snapshots";
-					StringBuilder imageFileName = new StringBuilder("image_");
-					imageFileName.append(alarmInfoHolder.getLastDetectedMovementInfoTimestamp());
-					imageFileName.append(".jpg");
-					boolean isCamera = true;
-					if (!isCamera) {
+					
+					String directory = appProperties.getSnapshotsDir();
+					String imageFileName = ExecuteShellComand.getFileName(appProperties.getSnapshotsPrefix(), 
+							alarmInfoHolder.getLastDetectedMovementInfoTimestamp(), appProperties.getSnapshotsSuffix());
+					if (!appProperties.isCameraEnable()) {
 						EmailUtil.sendAlarmEmail(emailParameters);
 					} else {
 						//load file from the disk
-						FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName.toString());
+						FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName);
 						try {
 							EmailUtil.sendAlarmEmailWithAttachment(emailParameters, file);
 						} catch (MessagingException e) {
@@ -126,6 +125,11 @@ public class AlarmServiceImpl implements AlarmService {
 			}
 		}
 		alarmInfoHolder.resetDetectedMovementInfoTimestamp();
+		
+		//start making snapshot pictures
+		if (appProperties.isCameraEnable()) {
+			snapshotPictures(appProperties.getSnapshotsInterval());
+		}
 	}
 
 
@@ -174,13 +178,49 @@ public class AlarmServiceImpl implements AlarmService {
 		long currentTimeMillis = System.currentTimeMillis();
 		alarmInfoHolder.setLastDetectedMovementInfoTimestamp(currentTimeMillis);
 		detectedMovementMonitor.checkMovementInfo();
-		//TODO this should take just picture
 		detectedMovementMonitor.makePictureSnapshots(currentTimeMillis);
 	}
 
 	public String getLogs() {
 		// TODO Auto-generated method stub
 		return "TODO";
+	}
+
+
+	@Override
+	@Async
+	public void snapshotPictures(long snapshotInterval) {
+		ExecuteShellComand.stopMotion();
+		long currTimestamp = System.currentTimeMillis();
+		long deadlineTimestamp = currTimestamp + snapshotInterval;
+		String snapshotsDir = appProperties.getSnapshotsDir();
+		String fullSnapshotsDir = snapshotsDir + currTimestamp;
+		String snapshotsPrefix = appProperties.getSnapshotsPrefix();
+		String snapshotsSuffix = appProperties.getSnapshotsSuffix();
+		ExecuteShellComand.createSnapshotDir(snapshotsDir, currTimestamp);
+		LOGGER.info("Start snapshot to directory {}.", currTimestamp);
+		while (System.currentTimeMillis() < deadlineTimestamp) {
+			String fileName = ExecuteShellComand.getFileName(snapshotsPrefix, System.currentTimeMillis(), snapshotsSuffix);
+			ExecuteShellComand.snapshotImage(fullSnapshotsDir, fileName);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		}
+		LOGGER.info("Stop snapshot to the directory {}.", currTimestamp);
+		
+		ExecuteShellComand.startMotion();
+		
+		ExecuteShellComand.zipSnapshotDir(snapshotsDir, currTimestamp);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		ExecuteShellComand.deleteSnapshotDir(snapshotsDir, currTimestamp);
+		
+		ExecuteShellComand.changeOwnershipSnapshotDir(snapshotsDir, currTimestamp);
 	}
 
 }
