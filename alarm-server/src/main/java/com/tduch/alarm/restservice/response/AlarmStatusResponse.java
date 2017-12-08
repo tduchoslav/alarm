@@ -20,7 +20,7 @@ public class AlarmStatusResponse {
 		return false;
 	}
 
-	public String toString() {
-		return powerState.getState();
-	}
+//	public String toString() {
+//		return powerState.getState();
+//	}
 }

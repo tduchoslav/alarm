@@ -42,6 +42,7 @@ public class AlarmServiceImpl implements AlarmService {
 	@Autowired
 	private AppProperties appProperties;
 	
+	@Override
 	public void alarmHeartBeat() {
 		LOGGER.info("Alarm heartbeat received.");
 		alarmInfoHolder.setLastHeartBeatTimestamp(System.currentTimeMillis());
@@ -56,6 +57,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public void disableAlarm() {
 		LOGGER.info("Alarm disabled.");
 		alarmInfoHolder.clearHeartBeats();
@@ -64,6 +66,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public void enableAlarm() {
 		LOGGER.info("Alarm enabled.");
 		alarmInfoHolder.clearHeartBeats();
@@ -71,6 +74,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public void detectedMovement() {
 		LOGGER.info("Alarm detected movement!!!");
 		if (appProperties.isSmsEnable()) {
@@ -133,6 +137,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public boolean isAlarmEnabled() {
 		boolean isAlarmOn = alarmStatusService.isAlarmStatusOn();
 		LOGGER.info("Alarm is {}", isAlarmOn);
@@ -140,12 +145,14 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public boolean test() {
 		LOGGER.info("Test if communication is connected.");
 		return true;
 	}
 
 
+	@Override
 	public void processVoltage(double currentVolts) {
 		LOGGER.info("Alarm process voltage: " + currentVolts + "V.");
 		if (currentVolts < 6.0) {
@@ -173,6 +180,7 @@ public class AlarmServiceImpl implements AlarmService {
 		
 	}
 
+	@Override
 	public void detectedMovementInfo() {
 		LOGGER.info("Movement Info detected.");
 		long currentTimeMillis = System.currentTimeMillis();
@@ -181,6 +189,7 @@ public class AlarmServiceImpl implements AlarmService {
 		detectedMovementMonitor.makePictureSnapshots(currentTimeMillis);
 	}
 
+	@Override
 	public String getLogs() {
 		// TODO Auto-generated method stub
 		return "TODO";
@@ -188,8 +197,17 @@ public class AlarmServiceImpl implements AlarmService {
 
 
 	@Override
+	public Object getSnapshotPictures(long snapshotInterval) {
+		return doSnapshotPictures(snapshotInterval);
+	}
+	
+	@Override
 	@Async
 	public void snapshotPictures(long snapshotInterval) {
+		doSnapshotPictures(snapshotInterval);
+	}
+	
+	private String doSnapshotPictures(long snapshotInterval) {
 		ExecuteShellComand.stopMotion();
 		long currTimestamp = System.currentTimeMillis();
 		long deadlineTimestamp = currTimestamp + snapshotInterval;
@@ -221,6 +239,9 @@ public class AlarmServiceImpl implements AlarmService {
 		ExecuteShellComand.deleteSnapshotDir(snapshotsDir, currTimestamp);
 		
 		ExecuteShellComand.changeOwnershipSnapshotDir(snapshotsDir, currTimestamp);
+		
+		//TODO return the zip file
+		return null;
 	}
 
 }

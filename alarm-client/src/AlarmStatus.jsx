@@ -16,22 +16,28 @@ class AlarmStatus extends Component {
     
     componentDidMount() {
         let url = SERVICE_BASE_URL + STATUS_RELATIVE_URL;
-        //let stat = false;
-        //call rest service
-        fetch(url)
-        .then(results => 
-            {
-                //TODO change to json and results.json();!!!!
-                this.setState({alarmStatus : results.ok});
-                console.log('toto je co vraci sluzba:  %s', results.ok);
+        var request = new Request(url, {
+            headers: new Headers({
+                'Content-Type': 'text/plain',
+                'accept': 'application/json'   
             })
-        .catch('error occured');
+        });
+        fetch(request)
+        .then(results => {
+            let json = results.json();
+            console.log('results:  %s', json);
+            return json;
+            })
+        .then(jsonData => 
+            {
+                this.setState({alarmStatus : jsonData['enabled']});
+            })
+        .catch(e => {console.error('my error occured during fetching: %s got error %s', url, e)});
         
     }
     
     render() {
         //TODO
-        console.log('statussssss: ' + this.state.alarmStatus);
         return (
                 
                     <tr>
