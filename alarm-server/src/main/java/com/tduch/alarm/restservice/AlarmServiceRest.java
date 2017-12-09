@@ -4,8 +4,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tduch.alarm.conf.AppProperties;
@@ -27,43 +25,31 @@ public class AlarmServiceRest {
 	
 	private static final String template = "HeartBeat count %s received.";
 	private final AtomicLong counter = new AtomicLong();
-
-//
-//	@RequestMapping(value = "/alarmHeartBeat/{name}", method = RequestMethod.GET)
-//	public HeartBeatResponse alarmHeartBeat(@RequestParam(value = "name") String name) {
-//		alarmService.alarmHeartBeat();
-//		return new HeartBeatResponse(counter.incrementAndGet(), String.format(template, name));
-//	}
 	
-	//@RequestMapping("/alarmHeartBeatRest")
 	@RequestMapping(value={"/alarmHeartBeatRest", "/heartBeat"})
 	public HeartBeatResponse alarmHeartBeat() {
 		alarmService.alarmHeartBeat();
 		return new HeartBeatResponse(counter.incrementAndGet(), String.format(template, counter.get()));
 	}
 	
-	//@RequestMapping("/alarmEnableRest")
 	@RequestMapping(value={"/alarmEnableRest", "/enable"})
 	public AlarmPowerOnOffResponse alarmEnable() {
 		alarmService.enableAlarm();
 		return new AlarmPowerOnOffResponse(AlarmPowerOnOffResponse.PowerState.ON);
 	}
 	
-	//@RequestMapping("/alarmDisableRest")
 	@RequestMapping(value={"/alarmDisableRest", "/disable"})
 	public AlarmPowerOnOffResponse alarmDisable() {
 		alarmService.disableAlarm();
 		return new AlarmPowerOnOffResponse(AlarmPowerOnOffResponse.PowerState.OFF);
 	}
 	
-	//@RequestMapping("/alarmMovementDetectedRest")
 	@RequestMapping(value={"/alarmMovementDetectedRest", "/movement"})
 	public AlarmMovementDetectedResponse alarmMovementDetected() {
 		alarmService.detectedMovement();
 		return new AlarmMovementDetectedResponse();
 	}
 	
-	//@RequestMapping("/alarmMovementDetectedInfoRest")
 	@RequestMapping(value={"/alarmMovementDetectedInfoRest", "/movementInfo"})
 	public AlarmMovementDetectedResponse alarmMovementDetectedInfo() {
 		/*
@@ -76,36 +62,35 @@ public class AlarmServiceRest {
 	}
 	
 	@RequestMapping(value={"/alarmInfoStatusRest", "/status"})
-	public String alarmInfoStatus() {
+	public AlarmStatusResponse alarmInfoStatus() {
 		AlarmStatusResponse alarmStatusResponse = null;
 		if (alarmService.isAlarmEnabled()) {
 			alarmStatusResponse = new AlarmStatusResponse(AlarmPowerOnOffResponse.PowerState.ON);
 		} else {
 			alarmStatusResponse = new AlarmStatusResponse(AlarmPowerOnOffResponse.PowerState.OFF);
 		}
-		return alarmStatusResponse.getPowerState().getState();
+		return alarmStatusResponse;
 	}
 	
 	@RequestMapping(value={"/alarmTestRest", "/test"})
-	//public TestResponse alarmTest() {
-	public String alarmTest() {
+	public TestResponse alarmTest() {
 		alarmService.test();
 		TestResponse testResponse = new TestResponse("TEST_OK");
-		return testResponse.getTest();
+		return testResponse;
 	}
 	
-	//voltage/currentVolts=6,5
-	@RequestMapping(value={"/alarmBatteryVoltageStatusRest", "/voltage"} , method = RequestMethod.GET)
-	public TestResponse alarmBatteryVoltageStatus(@RequestParam double currentVolts) {
-		alarmService.processVoltage(currentVolts);
-		return new TestResponse("test");
-	}
+//	//voltage/currentVolts=6,5
+//	@RequestMapping(value={"/alarmBatteryVoltageStatusRest", "/voltage"} , method = RequestMethod.GET)
+//	public TestResponse alarmBatteryVoltageStatus(@RequestParam double currentVolts) {
+//		alarmService.processVoltage(currentVolts);
+//		return new TestResponse("test");
+//	}
 
 	@RequestMapping(value = { "/alarmLogsRest", "/logs" })
-	public String alarmLogs() {
+	public TestResponse alarmLogs() {
 		String logs = alarmService.getLogs();
 		TestResponse testResponse = new TestResponse(logs);
-		return testResponse.getTest();
+		return testResponse;
 	}
 	
 	@RequestMapping(value={"/alarmSnapshotsPictureRest", "/snapshots"})
@@ -114,5 +99,16 @@ public class AlarmServiceRest {
 		TestResponse testResponse = new TestResponse("SNAPSHOTS_START");
 		return testResponse.getTest();
 	}
+	
+	/**
+	 * TODO return zip file with the pictures from the snapshot!!!
+	 * @return
+	 */
+	@RequestMapping(value={"/alarmGetSnapshotsPictureRest", "/getSnapshots"})
+	public Object alarmGetSnapshots() {
+		return alarmService.getSnapshotPictures(appProperties.getSnapshotsInterval());
+	}
+	
+	
 
 }

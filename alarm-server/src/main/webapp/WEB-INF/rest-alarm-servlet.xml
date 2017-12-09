@@ -22,7 +22,6 @@
        	http://www.springframework.org/schema/data/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd">
 
-       <!-- <import resource="applicationContext.xml"/>-->
 
 		<mvc:annotation-driven/>
 		
