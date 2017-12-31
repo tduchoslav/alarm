@@ -127,4 +127,10 @@ public class ExecuteShellComand {
 		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
 		LOGGER.info("executed: {}, output: {}.", command, executeCommand);
 	}
+	
+	public static void deleteSnapshotFile(String dirName, String fileName) {
+		String command = "rm " + dirName + fileName;
+		String executeCommand = OBJ_EXE_SHELL.executeCommand(command);
+		LOGGER.info("executed: {}, output: {}.", command, executeCommand);
+	}
 }

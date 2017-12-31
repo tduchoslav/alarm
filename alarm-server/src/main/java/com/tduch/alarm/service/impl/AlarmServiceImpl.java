@@ -62,6 +62,13 @@ public class AlarmServiceImpl implements AlarmService {
 		LOGGER.info("Alarm disabled.");
 		alarmInfoHolder.clearHeartBeats();
 		alarmStatusService.setAlarmStatus(false);
+
+		if (appProperties.isCameraEnable()) {
+			String imageFileName = ExecuteShellComand.getFileName(appProperties.getSnapshotsPrefix(), 
+					alarmInfoHolder.getLastDetectedMovementInfoTimestamp(), appProperties.getSnapshotsSuffix());
+			ExecuteShellComand.deleteSnapshotFile(appProperties.getSnapshotsDir(), imageFileName);
+		}
+		
 		alarmInfoHolder.resetDetectedMovementInfoTimestamp();
 	}
 
