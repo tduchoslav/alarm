@@ -37,12 +37,12 @@ const int* port = 8080;
 char* ip = "192.168.0.102";
 
 const long ACTIVATION_TIMER_INTERVAL = 35000; //35 sec.
-const long COUNTDOWN_ALARM_TIMER_INTERVAL = 30000; //30 sec.
+const long COUNTDOWN_ALARM_TIMER_INTERVAL = 45000; //45 sec.
 const long RED_LED_OFF_TIMER_INTERVAL = 60000; //60 sec.
 const long GREEN_LED_OFF_TIMER_INTERVAL = 65000; //60 sec.
 const long HEART_BEAT_TIMER_INTERVAL = 1200000;// 20 min heartbeat
 const long BLINK_GREEN_LED_TIMER_INTERVAL = 3600000; //1 hour.
-const long ALARM_SERVER_STATUS_CHECKER_TIMER_INTERVAL = 1800000;// 30 min
+const long ALARM_SERVER_STATUS_CHECKER_TIMER_INTERVAL = 300000;// 5 min
 
 byte redledpin = A2;
 byte greenledpin = A3;
@@ -147,7 +147,7 @@ void setup() {
 
 }
 
-void loop() {  
+void loop() {    
   simpleTimer.run();
 
   if (isRedLedOn) {
@@ -163,6 +163,7 @@ void loop() {
       if (key) {
         inputPassword += key;
         //strcat(inputPassword, key);
+        Serial.println("");
         Serial.print(F("input password: "));
         Serial.println(inputPassword);
       }
@@ -191,10 +192,11 @@ void loop() {
       //if (strcmp(rightPassword, inputPassword) == 0) {
         Serial.print(F("inpuPassword equals to the correct password: "));
         Serial.println(inputPassword);
-        simpleTimer.disable(countdownTimerId);
-        Serial.println();Serial.print(F("DEACTIVATION: "));Serial.print(F(" Timer countdownTimerId (")); Serial.print(countdownTimerId); Serial.print(F(") has been disabled by given correct password at ")); Serial.print(millis()/1000);Serial.print(F(" sec."));
+        simpleTimer.deleteTimer(countdownTimerId);
+        isCountdownTimerRunning = false;
+        Serial.println();Serial.print(F("DEACTIVATION: "));Serial.print(F(" Timer countdownTimerId (")); Serial.print(countdownTimerId); Serial.print(F(") has been deleted by given correct password at ")); Serial.print(millis()/1000);Serial.print(F(" sec."));
         
-        inputPassword = "x"; //workaround in order to not execute the disabling all the time
+        inputPassword = ""; //workaround in order to not execute the disabling all the time
         //inputPassword[0] = 0;
         isDetectorOn = false;
         isGreenLedOn = true;
@@ -205,7 +207,7 @@ void loop() {
         isRedLedOn = false;
 
         isMovementDetectedInfoSent = false;
-
+        
         //stop alarm server monitoring
         httpGetAlarmStop();        
         
@@ -282,7 +284,6 @@ void runAlarm() {
     simpleTimer.deleteTimer(blinkGreeLedTimerId);
 
     isCountdownTimerRunning = false;
-
 
     //stop alarm server monitoring
     httpGetAlarmStop();        
@@ -524,14 +525,13 @@ boolean sendHttpGetRequest(char* request, String serverIp, int port) {
 
   //send request
   bool isSent = sendHttpGet(request, serverIp, port);
-  
+ 
   //try to send once more
   if (!isSent) {
     delay(100);
     //reset();
     //delay(1000);
     isSent = sendHttpGet(request, serverIp, port);
-
     if (!isSent) {
       //hard restart of the wifi modul via relay
       if (isHardRestartWifi) {
@@ -541,8 +541,7 @@ boolean sendHttpGetRequest(char* request, String serverIp, int port) {
         hardRestartWifi();
       }
     }
-    
-  }
+  }   
   
   if (isSent) {
     isHardRestartWifi = false;
@@ -592,6 +591,9 @@ void reset() {
  * send http send
  */
 boolean sendHttpGet (char* request, String serverName, int port) {
+  //!!!!!JUST FOR TESTING PURPOSES, DETELE THIS LINE LATER!!!!!
+  //return true;
+  
   //setCwMode();
   //setNewWifi();
   //delay(3000);
