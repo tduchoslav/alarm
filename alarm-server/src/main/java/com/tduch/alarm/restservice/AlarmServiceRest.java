@@ -112,11 +112,13 @@ public class AlarmServiceRest {
 	@RequestMapping(value={"/startCameraMotionRest", "/startMotion"})
 	public void startMotion() {
 		alarmService.startMotionCamera();
+		//TODO return OK
 	}
 	
-	@RequestMapping(value={"/stopCameraMotionRest", "/stoptMotion"})
+	@RequestMapping(value={"/stopCameraMotionRest", "/stopMotion"})
 	public void stopMotion() {
 		alarmService.stopMotionCamera();
+		//TODO return OK
 	}
 	
 
