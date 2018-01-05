@@ -657,7 +657,7 @@ boolean sendHttpGet (char* request, String serverName, int port) {
 void hardRestartWifi() {
   Serial.println(F("Power off esp8266"));
   digitalWrite(esp8266Power, HIGH);
-  Serial.println("waiting 3 sec. esp is switched off");
+  Serial.println(F("waiting 3 sec. esp is switched off"));
   delay(3000);
   Serial.println(F("Power on esp8266"));
   digitalWrite(esp8266Power, LOW);
@@ -668,7 +668,7 @@ void hardRestartWifi() {
 void longHardRestartWifi() {
   Serial.println(F("Power off esp8266 for long time"));
   digitalWrite(esp8266Power, HIGH);
-  Serial.println("waiting 1 min. esp is switched off");
+  Serial.println(F("waiting 1 min. esp is switched off"));
   delay(60000);
   Serial.println(F("Power on esp8266"));
   digitalWrite(esp8266Power, LOW);
@@ -678,6 +678,7 @@ void longHardRestartWifi() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///NOT USED METHODS/////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 void setCwMode() {
   myEspSerial.println("AT+CWMODE=1");
   delay(100);
@@ -696,7 +697,8 @@ void setCwMode() {
         }
     }
 }
-
+*/
+/*
 void setNewWifi() {
   myEspSerial.println("AT+CWJAP=\"tduch_net\",\"11Zari2016\"");
   delay(1000);
@@ -715,4 +717,4 @@ void setNewWifi() {
         }
     }
 }
-
+*/
