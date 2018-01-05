@@ -69,4 +69,15 @@ public interface AlarmService {
 	 */
 	Object getSnapshotPictures(long snapshotInterval);
 
+	
+	/**
+	 * Stops motion dameon on the raspberry
+	 */
+	void stopMotionCamera();
+	
+	/**
+	 * Starts motion dameon on the raspberry, so the camera gives live stream
+	 */
+	void startMotionCamera();
+	
 }

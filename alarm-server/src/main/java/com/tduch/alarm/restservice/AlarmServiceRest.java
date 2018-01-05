@@ -109,6 +109,15 @@ public class AlarmServiceRest {
 		return alarmService.getSnapshotPictures(appProperties.getSnapshotsInterval());
 	}
 	
+	@RequestMapping(value={"/startCameraMotionRest", "/startMotion"})
+	public void startMotion() {
+		alarmService.startMotionCamera();
+	}
+	
+	@RequestMapping(value={"/stopCameraMotionRest", "/stoptMotion"})
+	public void stopMotion() {
+		alarmService.stopMotionCamera();
+	}
 	
 
 }
