@@ -235,10 +235,6 @@ void loop() {
   if (isGreenLedOn && isGreenLedBlinking) {
     switchOffGreenLed();
   }
-
-  //testing request triggered by pressing the button '#' 3 times in 2 sec.
-  checkTesting();
-
   
   delay(50);
   
@@ -677,12 +673,6 @@ void longHardRestartWifi() {
   Serial.println(F("Power on esp8266"));
   digitalWrite(esp8266Power, LOW);
   delay(3000);
-}
-
-void checkTesting() {
-  //check if the # was pressed was pressed 3 times:
-  //todo
-  //hashPressedCount++;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
