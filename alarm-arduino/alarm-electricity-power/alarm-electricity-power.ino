@@ -430,6 +430,8 @@ boolean httpGetRequestIsServerAlarmStatusOn() {
     }
   } else {
     Serial.println(F("There is some problem, could not send request."));
+    hardRestartWifi();
+    return false;
   }
   myEspSerial.println("AT+CIPCLOSE");
   delay(100);
