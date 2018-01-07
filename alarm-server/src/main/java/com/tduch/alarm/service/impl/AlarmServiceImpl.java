@@ -115,13 +115,18 @@ public class AlarmServiceImpl implements AlarmService {
 					emailInfoDto.setSentTmstmp(System.currentTimeMillis());
 					alarmEmailInfoService.insert(emailInfoDto);
 					
-					
+					boolean cameraEnable = appProperties.isCameraEnable();
 					String directory = appProperties.getSnapshotsDir();
-					String imageFileName = ExecuteShellComand.getFileName(appProperties.getSnapshotsPrefix(), 
-							alarmInfoHolder.getLastDetectedMovementInfoTimestamp(), appProperties.getSnapshotsSuffix());
-					if (!appProperties.isCameraEnable()) {
+					if (alarmInfoHolder.getLastDetectedMovementInfoTimestamp() == null) {
+						//probably request detectedMovementInfo has not been received, so the snapshot does not exist
+						cameraEnable = false;
+					}
+					if (!cameraEnable) {
+						//sent email without picture
 						EmailUtil.sendAlarmEmail(emailParameters);
 					} else {
+						String imageFileName = ExecuteShellComand.getFileName(appProperties.getSnapshotsPrefix(), 
+								alarmInfoHolder.getLastDetectedMovementInfoTimestamp(), appProperties.getSnapshotsSuffix());
 						//load file from the disk
 						FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName);
 						try {
@@ -135,8 +140,8 @@ public class AlarmServiceImpl implements AlarmService {
 				LOGGER.error("Could not send email.", e);
 			}
 		}
-		alarmInfoHolder.resetDetectedMovementInfoTimestamp();
 		
+		//alarmInfoHolder.resetDetectedMovementInfoTimestamp();		
 		//disable alarm after movement is detected
 		disableAlarm();
 		
