@@ -61,7 +61,7 @@ public class AlarmServiceRest {
 		return new AlarmMovementDetectedResponse();
 	}
 	
-	@RequestMapping(value={"/alarmInfoStatusRest", "/status"})
+	@RequestMapping(value={"/alarmInfoStatusRest", "/statusRest"})
 	public AlarmStatusResponse alarmInfoStatus() {
 		AlarmStatusResponse alarmStatusResponse = null;
 		if (alarmService.isAlarmEnabled()) {
@@ -71,6 +71,16 @@ public class AlarmServiceRest {
 		}
 		return alarmStatusResponse;
 	}
+	
+	/**
+	 * Special test just for arduino which can process just string value
+	 */
+	@RequestMapping(value={"/alarmInfoStatusRest", "/status"})
+	public String alarmInfoStatusString() {
+		AlarmStatusResponse alarmInfoStatus = alarmInfoStatus();
+		return alarmInfoStatus.getPowerState().getState();
+	}
+	
 	
 	@RequestMapping(value={"/alarmTestRest", "/test"})
 	public TestResponse alarmTest() {

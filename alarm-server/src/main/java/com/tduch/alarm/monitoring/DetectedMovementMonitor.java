@@ -129,6 +129,6 @@ public class DetectedMovementMonitor {
 			e1.printStackTrace();
 		}
 		
-		ExecuteShellComand.startMotion();
+		//ExecuteShellComand.startMotion();
 	}
 }

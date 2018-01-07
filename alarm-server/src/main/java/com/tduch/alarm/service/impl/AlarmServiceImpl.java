@@ -42,6 +42,7 @@ public class AlarmServiceImpl implements AlarmService {
 	@Autowired
 	private AppProperties appProperties;
 	
+	@Override
 	public void alarmHeartBeat() {
 		LOGGER.info("Alarm heartbeat received.");
 		alarmInfoHolder.setLastHeartBeatTimestamp(System.currentTimeMillis());
@@ -56,6 +57,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public void disableAlarm() {
 		LOGGER.info("Alarm disabled.");
 		alarmInfoHolder.clearHeartBeats();
@@ -71,6 +73,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public void enableAlarm() {
 		LOGGER.info("Alarm enabled.");
 		alarmInfoHolder.clearHeartBeats();
@@ -78,6 +81,7 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public void detectedMovement() {
 		LOGGER.info("Alarm detected movement!!!");
 		if (appProperties.isSmsEnable()) {
@@ -133,13 +137,18 @@ public class AlarmServiceImpl implements AlarmService {
 		}
 		alarmInfoHolder.resetDetectedMovementInfoTimestamp();
 		
+		//disable alarm after movement is detected
+		disableAlarm();
+		
 		//start making snapshot pictures
 		if (appProperties.isCameraEnable()) {
 			snapshotPictures(appProperties.getSnapshotsInterval());
 		}
+		
 	}
 
 
+	@Override
 	public boolean isAlarmEnabled() {
 		boolean isAlarmOn = alarmStatusService.isAlarmStatusOn();
 		LOGGER.info("Alarm is {}", isAlarmOn);
@@ -147,12 +156,14 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public boolean test() {
 		LOGGER.info("Test if communication is connected.");
 		return true;
 	}
 
 
+	@Override
 	public void processVoltage(double currentVolts) {
 		LOGGER.info("Alarm process voltage: " + currentVolts + "V.");
 		if (currentVolts < 6.0) {
@@ -180,6 +191,7 @@ public class AlarmServiceImpl implements AlarmService {
 		
 	}
 
+	@Override
 	public void detectedMovementInfo() {
 		LOGGER.info("Movement Info detected.");
 		long currentTimeMillis = System.currentTimeMillis();
@@ -189,17 +201,20 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public String getLogs() {
 		// TODO Auto-generated method stub
 		return "TODO";
 	}
 
 
+	@Override
 	public Object getSnapshotPictures(long snapshotInterval) {
 		return doSnapshotPictures(snapshotInterval);
 	}
 	
 
+	@Override
 	@Async
 	public void snapshotPictures(long snapshotInterval) {
 		doSnapshotPictures(snapshotInterval);
@@ -226,7 +241,7 @@ public class AlarmServiceImpl implements AlarmService {
 		}
 		LOGGER.info("Stop snapshot to the directory {}.", currTimestamp);
 		
-		ExecuteShellComand.startMotion();
+		//ExecuteShellComand.startMotion();
 		
 		ExecuteShellComand.zipSnapshotDir(snapshotsDir, currTimestamp);
 		try {
@@ -243,12 +258,14 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 
+	@Override
 	public void stopMotionCamera() {
 		LOGGER.info("Stop motion daemon.");
 		ExecuteShellComand.stopMotion();
 	}
 
 
+	@Override
 	public void startMotionCamera() {
 		LOGGER.info("Start motion daemon.");
 		ExecuteShellComand.startMotion();
