@@ -140,8 +140,7 @@ public class AlarmServiceImpl implements AlarmService {
 				LOGGER.error("Could not send email.", e);
 			}
 		}
-		
-		//alarmInfoHolder.resetDetectedMovementInfoTimestamp();		
+				
 		//disable alarm after movement is detected
 		disableAlarm();
 		

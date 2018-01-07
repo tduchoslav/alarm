@@ -408,22 +408,25 @@ boolean httpGetRequestIsServerAlarmStatusOn() {
     Serial.println(F("TCP connection ready"));
   } 
   delay(100);
-//  String sendCmd = "AT+CIPSEND=";//determine the number of characters to be sent.
   myEspSerial.print("AT+CIPSEND=");
   myEspSerial.println(strlen(requestBuffer));
   delay(500);
   if(myEspSerial.find(">")) { 
     Serial.println(F("Sending..")); 
-    //myEspSerial.print(req);
     myEspSerial.print(requestBuffer);
-    //if(myEspSerial.find("SEND OK")) { 
-    if(myEspSerial.find("SEND OK") && myEspSerial.find("ALARM_ON")) { 
-      returnedVal = true;
-      isHardRestartWifi = false;
-      Serial.println(F("Alarm server is already ON."));
-    } else {
-      //returndVal = true;//delete this
-      Serial.println(F("Alarm server is OFF."));
+    if(myEspSerial.find("SEND OK")) { 
+      if (myEspSerial.find("ALARM_ON")) {
+        returnedVal = true;
+        isHardRestartWifi = false;
+        Serial.println(F("Alarm server is already ON."));  
+      } else {
+        Serial.println(F("Alarm server is OFF."));
+      }
+    } 
+    else {
+      //status wifi request could not be sent. So restart the wifi
+      hardRestartWifi();
+      return false;
     }
   } else {
     Serial.println(F("There is some problem, could not send request."));
