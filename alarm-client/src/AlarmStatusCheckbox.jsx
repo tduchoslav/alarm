@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
+import Switch from 'react-toggle-switch';
+import "../node_modules/react-toggle-switch/dist/css/switch.min.css";
 
 class AlarmStatusCheckbox extends Component {
     
     render() {
         console.info('checkbox render: ' + this.props.on);
-        return (<input type="checkbox" ref="statusCheckBox" name="statusCheckbox" checked={this.props.on} onChange={this.props.handleStatusCheckboxChange}/>);                
+        return (
+                <Switch onClick={this.props.handleStatusCheckboxChange} on={this.props.on}>
+                </Switch>
+                );                
     }
 }
 

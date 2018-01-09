@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {SERVICE_BASE_URL, STATUS_RELATIVE_URL, ALARM_ENABLE_RELATIVE_URL, ALARM_DISABLE_RELATIVE_URL} from './AlarmConstants.jsx';
+ import {SERVICE_BASE_URL, STATUS_RELATIVE_URL, ALARM_ENABLE_RELATIVE_URL, ALARM_DISABLE_RELATIVE_URL} from './AlarmConstants.jsx';
 import AlarmStatusCheckbox from './AlarmStatusCheckbox.jsx';
-
 
 /**
  * Component Alarm Status with checkbox on/off 
@@ -10,7 +9,8 @@ class AlarmStatus extends Component {
     constructor(props) {
         super(props);
         this.state = {
-                isAlarmOn : false
+                isAlarmOn : false,
+                ajaxCallResult: true
         }
         
         this.ajaxGetAlarmStatus = this.ajaxGetAlarmStatus.bind(this);
@@ -29,18 +29,30 @@ class AlarmStatus extends Component {
         return (
                 
                     <tr>
-                        <th>Alarm Status:</th>                        
-                        <th>
+                        <td>
+                            <span>Alarm:</span>
+                        </td>                        
+                        <td>
                             <AlarmStatusCheckbox on={this.state.isAlarmOn} handleStatusCheckboxChange={this.handleStatusCheckboxChange}/>
-                        </th>
+                        </td>
+                        <td className='App-table-column-status-title'>
+                            <span>
+                                {this.state.isAlarmOn ? 'ON' : 'OFF'}
+                            </span>
+                        </td>
+                        <td>
+                            <span className = {this.state.ajaxCallResult ? 'App-rest-service-result-success' : 'App-rest-service-result-error'}>
+                                {this.state.ajaxCallResult ? 'success' : 'failure'}
+                            </span>
+                        </td>
                     </tr>
-                
+                            
                 );
     }
-
+    
     handleStatusCheckboxChange(e) {
         e.preventDefault();
-        let newState = !this.state.isAlarmOn;        
+        let newState = !this.state.isAlarmOn;
         this.ajaxAlarmToggleOnOff(newState);
     }
     
@@ -75,9 +87,17 @@ class AlarmStatus extends Component {
             })
         .then(jsonData => 
             {
-                this.setState({isAlarmOn : jsonData['enabled']});
+                this.setState({
+                    isAlarmOn : jsonData['enabled'],
+                    ajaxCallResult : true
+                });
             })
-        .catch(e => {console.error('my error occured during fetching: %s got error %', request, e)});
+        .catch(
+                e => {
+                        console.error('my error occured during fetching: %s got error %', request, e);
+                        this.setState({ajaxCallResult : false});
+                    }                
+               );
     }
 }
 

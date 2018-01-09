@@ -26,3 +26,20 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.App-table-column-status-title {
+	width:20px; 
+}
+.App-rest-service-result-error {
+	padding: 3px;
+	margin-left: 60px;
+	color: white;
+	background-color: red;
+}
+
+.App-rest-service-result-success {
+	padding: 3px;
+	margin-left: 60px;
+	color: white;
+	background-color: green;
+}
