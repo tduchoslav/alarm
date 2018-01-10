@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import AlarmStatus from './AlarmStatus.jsx';
-import logo from './logo.svg';
-import './AlarmApp.css';
+import logo from './img/logo.svg';
+import './css/AlarmApp.css';
 
 class AlarmApp extends Component {
 	
@@ -9,15 +9,16 @@ class AlarmApp extends Component {
 		return (
 	      <div className="App">
 	        <header className="App-header">
-	          <img src={logo} className="App-logo" alt="logo" />
-	          <h1 className="App-title">Welcome to React</h1>
+			  <img src={logo} className="App-logo" alt="logo" />
+	          <h1 className="App-title">Alarm application x</h1>
 	        </header>
 	        <p className="App-intro">
-	          To get started, edit <code>src/AlarmApp.js</code> and save to reload.
+	          Alarm application
 	        </p>
 	          <table>
 	              <tbody>
 	              <AlarmStatus />
+	              
 	              </tbody>
 	          </table>
 	      </div>

@@ -1,6 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'war'
+apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
 
 group = 'com.tduch'
 version = '1.0.2-SNAPSHOT'
