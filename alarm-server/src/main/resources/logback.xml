@@ -9,14 +9,14 @@
     			<level>TRACE</level>
     		</filter>
     	</appender>
-
+<!-- 
       	<appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
     		<File>rest-demo.log</File>
     		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-    		    <!-- daily rollover -->
+    		    
     			<FileNamePattern>rest-demo.%d{yyyy-MM-dd}.log</FileNamePattern>
 
-    			<!-- keep 30 days' worth of history -->
+    			
     			<maxHistory>30</maxHistory>			
     		</rollingPolicy>
 
@@ -24,11 +24,12 @@
     			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
     		</encoder> 	    
       	</appender>
+      	
       	<appender name="minuteRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
     		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-    		    <!-- rollover every minute -->
+    		    
     			<FileNamePattern>rest-demo-minute.%d{yyyy-MM-dd_HH-mm}.log</FileNamePattern>
-    			<!-- keep 30 minutes' worth of history -->
+    			
     			<maxHistory>30</maxHistory>			
     		</rollingPolicy>
 
@@ -36,23 +37,30 @@
     			<Pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</Pattern>
     		</encoder> 	    
       	</appender>  	
-
+-->
     	<logger name="org.codingpedia" additivity="false">
-    	    <level value="DEBUG" />
+    	    <level value="INFO" />
+    	    <!-- 
     		<appender-ref ref="dailyRollingFileAppender"/>
     		<appender-ref ref="minuteRollingFileAppender"/>
+    		 -->
     		<appender-ref ref="consoleAppender" />
+    		
     	</logger>
     	
     	<logger name="com.tduch.alarm" level="DEBUG" additivity="false">
+    		<!--
     		<appender-ref ref="dailyRollingFileAppender"/>
     		<appender-ref ref="minuteRollingFileAppender"/>
+    		-->
 			<appender-ref ref="consoleAppender" />
 		</logger>
 		
-		<logger name="org.springframework.data.mongodb" level="DEBUG" additivity="false">
+		<logger name="org.springframework.data.mongodb" level="INFO" additivity="false">
+    		<!-- 
     		<appender-ref ref="dailyRollingFileAppender"/>
     		<appender-ref ref="minuteRollingFileAppender"/>
+			 -->
 			<appender-ref ref="consoleAppender" />
 		</logger>
 		
