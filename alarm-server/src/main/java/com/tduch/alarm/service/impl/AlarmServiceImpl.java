@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.tduch.alarm.conf.AppProperties;
@@ -19,6 +18,7 @@ import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.monitoring.DetectedMovementMonitor;
 import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
+import com.tduch.alarm.service.AlarmSnapshotsService;
 import com.tduch.alarm.service.AlarmStatusService;
 import com.tduch.alarm.sms.SmsUtil;
 
@@ -38,6 +38,9 @@ public class AlarmServiceImpl implements AlarmService {
 	
 	@Autowired
 	private DetectedMovementMonitor detectedMovementMonitor;
+	
+	@Autowired
+	private AlarmSnapshotsService alarmSnapshotsService;
 	
 	@Autowired
 	private AppProperties appProperties;
@@ -107,9 +110,6 @@ public class AlarmServiceImpl implements AlarmService {
 							appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
 				}
 				if (appProperties.isEmailEnable()) {
-//					AlarmEmailInfoEntity emailInfoEtity = new AlarmEmailInfoEntity();
-//					emailInfoEtity.setEmailInfo("movement detected warning.");
-//					emailInfoEtity.setSentTmstmp(System.currentTimeMillis());
 					AlarmEmailInfoDto emailInfoDto = new AlarmEmailInfoDto();
 					emailInfoDto.setEmailInfo("Movement detected warning.");
 					emailInfoDto.setSentTmstmp(System.currentTimeMillis());
@@ -146,7 +146,7 @@ public class AlarmServiceImpl implements AlarmService {
 		
 		//start making snapshot pictures
 		if (appProperties.isCameraEnable()) {
-			snapshotPictures(appProperties.getSnapshotsInterval());
+			alarmSnapshotsService.snapshotPictures(appProperties.getSnapshotsInterval());
 		}
 		
 	}
@@ -209,57 +209,7 @@ public class AlarmServiceImpl implements AlarmService {
 	public String getLogs() {
 		// TODO Auto-generated method stub
 		return "TODO";
-	}
-
-
-	@Override
-	public Object getSnapshotPictures(long snapshotInterval) {
-		return doSnapshotPictures(snapshotInterval);
-	}
-	
-
-	@Override
-	@Async
-	public void snapshotPictures(long snapshotInterval) {
-		doSnapshotPictures(snapshotInterval);
-	}
-	
-	private String doSnapshotPictures(long snapshotInterval) {
-		ExecuteShellComand.stopMotion();
-		long currTimestamp = System.currentTimeMillis();
-		long deadlineTimestamp = currTimestamp + snapshotInterval;
-		String snapshotsDir = appProperties.getSnapshotsDir();
-		String fullSnapshotsDir = snapshotsDir + currTimestamp;
-		String snapshotsPrefix = appProperties.getSnapshotsPrefix();
-		String snapshotsSuffix = appProperties.getSnapshotsSuffix();
-		ExecuteShellComand.createSnapshotDir(snapshotsDir, currTimestamp);
-		LOGGER.info("Start snapshot to directory {}.", currTimestamp);
-		while (System.currentTimeMillis() < deadlineTimestamp) {
-			String fileName = ExecuteShellComand.getFileName(snapshotsPrefix, System.currentTimeMillis(), snapshotsSuffix);
-			ExecuteShellComand.snapshotImage(fullSnapshotsDir, fileName);
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-		}
-		LOGGER.info("Stop snapshot to the directory {}.", currTimestamp);
-		
-		//ExecuteShellComand.startMotion();
-		
-		ExecuteShellComand.zipSnapshotDir(snapshotsDir, currTimestamp);
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		ExecuteShellComand.deleteSnapshotDir(snapshotsDir, currTimestamp);
-		
-		ExecuteShellComand.changeOwnershipSnapshotDir(snapshotsDir, currTimestamp);
-		
-		//TODO return the zip file
-		return null;
-	}
+	}	
 
 
 	@Override

@@ -13,6 +13,7 @@ import com.tduch.alarm.restservice.response.AlarmStatusResponse;
 import com.tduch.alarm.restservice.response.HeartBeatResponse;
 import com.tduch.alarm.restservice.response.TestResponse;
 import com.tduch.alarm.service.AlarmService;
+import com.tduch.alarm.service.AlarmSnapshotsService;
 
 @RestController
 public class AlarmServiceRest {
@@ -22,6 +23,9 @@ public class AlarmServiceRest {
 	
 	@Autowired
 	private AppProperties appProperties;
+	
+	@Autowired
+	private AlarmSnapshotsService alarmSnapshotsService;
 	
 	private static final String template = "HeartBeat count %s received.";
 	private final AtomicLong counter = new AtomicLong();
@@ -105,7 +109,7 @@ public class AlarmServiceRest {
 	
 	@RequestMapping(value={"/alarmSnapshotsPictureRest", "/snapshots"})
 	public String alarmSnapshots() {
-		alarmService.snapshotPictures(appProperties.getSnapshotsInterval());
+		alarmSnapshotsService.snapshotPictures(appProperties.getSnapshotsInterval());
 		TestResponse testResponse = new TestResponse("SNAPSHOTS_START");
 		return testResponse.getTest();
 	}
@@ -116,7 +120,7 @@ public class AlarmServiceRest {
 	 */
 	@RequestMapping(value={"/alarmGetSnapshotsPictureRest", "/getSnapshots"})
 	public Object alarmGetSnapshots() {
-		return alarmService.getSnapshotPictures(appProperties.getSnapshotsInterval());
+		return alarmSnapshotsService.getSnapshotPictures(appProperties.getSnapshotsInterval());
 	}
 	
 	@RequestMapping(value={"/startCameraMotionRest", "/startMotion"})

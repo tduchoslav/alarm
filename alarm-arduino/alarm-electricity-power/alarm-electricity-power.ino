@@ -303,6 +303,7 @@ void activateDetector() {
 
     //sent info to start alarm server
     //Serial.println("Sending request to start Alarm server");
+    isMovementDetectedInfoSent = false;
     httpGetAlarmStart();
 
     heartBeatTimerId = simpleTimer.setInterval(HEART_BEAT_TIMER_INTERVAL, sendHeartBeat); //set to 1 hour interval;
