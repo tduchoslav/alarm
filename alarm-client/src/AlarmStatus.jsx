@@ -82,7 +82,7 @@ class AlarmStatus extends Component {
         fetch(request)
         .then(results => {
             let json = results.json();
-            console.info('results:  %s', json);
+            console.debug('results:  %s', json);
             return json;
             })
         .then(jsonData => 

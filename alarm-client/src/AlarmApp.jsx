@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import AlarmStatus from './AlarmStatus.jsx';
+import AlarmTestingButton from './AlarmTestingButton.jsx';
+import AlarmLastStatusTimestamp from './AlarmLastStatusTimestamp.jsx';
+import AlarmLastHeartBeatTimestamp from './AlarmLastHeartBeatTimestamp.jsx';
 import logo from './img/logo.svg';
 import './css/AlarmApp.css';
 
@@ -18,6 +21,9 @@ class AlarmApp extends Component {
 	          <table>
 	              <tbody>
 	              <AlarmStatus />
+	              <AlarmLastStatusTimestamp />
+	              <AlarmLastHeartBeatTimestamp />
+	              <AlarmTestingButton />
 	              
 	              </tbody>
 	          </table>
