@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
- import {SERVICE_BASE_URL, STATUS_RELATIVE_URL, ALARM_ENABLE_RELATIVE_URL, ALARM_DISABLE_RELATIVE_URL} from './AlarmConstants.jsx';
+ import {SERVER, SERVICE_BASE_URL, STATUS_RELATIVE_URL, ALARM_ENABLE_RELATIVE_URL, ALARM_DISABLE_RELATIVE_URL} from './AlarmConstants.jsx';
 import AlarmStatusCheckbox from './AlarmStatusCheckbox.jsx';
 
 /**
@@ -57,7 +57,7 @@ class AlarmStatus extends Component {
     }
     
     ajaxGetAlarmStatus() {
-        let url = SERVICE_BASE_URL + STATUS_RELATIVE_URL;
+        let url = SERVER + SERVICE_BASE_URL + STATUS_RELATIVE_URL;
         let request = new Request(url, {
             headers: new Headers({
                 'Content-Type': 'text/plain',
@@ -68,11 +68,11 @@ class AlarmStatus extends Component {
     }
     
     ajaxAlarmToggleOnOff(status) {
-        let url = SERVICE_BASE_URL;
+        let url = SERVER + SERVICE_BASE_URL;
         if (status) {
-            url = SERVICE_BASE_URL + ALARM_ENABLE_RELATIVE_URL;
+            url = url + ALARM_ENABLE_RELATIVE_URL;
         } else {
-            url = SERVICE_BASE_URL + ALARM_DISABLE_RELATIVE_URL;
+            url = url + ALARM_DISABLE_RELATIVE_URL;
         }
         let request = new Request(url);
         this.fetchStatusRequest(request);

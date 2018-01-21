@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SERVICE_BASE_URL, ALARM_LAST_HEARTBEAT_RELATIVE_URL, ALARM_LAST_STATUS_RELATIVE_URL} from './AlarmConstants.jsx';
+import {SERVER, SERVICE_BASE_URL, ALARM_LAST_HEARTBEAT_RELATIVE_URL, ALARM_LAST_STATUS_RELATIVE_URL} from './AlarmConstants.jsx';
 import AlarmLastTimestamp from './AlarmLastTimestamp.jsx';
 
 class AlarmLastHeartBeatTimestamp extends Component {    
@@ -23,7 +23,7 @@ class AlarmLastHeartBeatTimestamp extends Component {
     
     componentDidMount() {
         console.debug('AlarmLastHeartBeatTimestamp mount.');
-        let url = SERVICE_BASE_URL + ALARM_LAST_HEARTBEAT_RELATIVE_URL;
+        let url = SERVER + SERVICE_BASE_URL + ALARM_LAST_HEARTBEAT_RELATIVE_URL;
         let request = new Request(url, {
             headers: new Headers({
                 'Content-Type': 'text/plain',

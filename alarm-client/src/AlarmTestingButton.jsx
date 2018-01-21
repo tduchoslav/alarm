@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SERVICE_BASE_URL, ALARM_TEST_RELATIVE_URL} from './AlarmConstants.jsx';
+import {SERVER, SERVICE_BASE_URL, ALARM_TEST_RELATIVE_URL} from './AlarmConstants.jsx';
 
 class AlarmTestingButton extends Component {    
     constructor(props) {
@@ -41,7 +41,7 @@ class AlarmTestingButton extends Component {
     }
     
     handleClick(event) {
-        let url = SERVICE_BASE_URL + ALARM_TEST_RELATIVE_URL;
+        let url = SERVER + SERVICE_BASE_URL + ALARM_TEST_RELATIVE_URL;
         let request = new Request(url, {
             headers: new Headers({
                 'Content-Type': 'text/plain',
