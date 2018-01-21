@@ -1,0 +1,5 @@
+
+rootProject.name = 'alarm-root'
+
+include 'alarm-server'
+include 'alarm-client' 

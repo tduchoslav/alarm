@@ -7,6 +7,7 @@ apply plugin: 'eclipse-wtp'
 group = 'com.tduch'
 version = '1.0.2-SNAPSHOT'
 
+
 description = """alarm-server"""
 
 sourceCompatibility = 1.8
