@@ -30,7 +30,7 @@ String inputPassword;
 
 SoftwareSerial myEspSerial(10, 12);
 
-const char* requestPattern =  "GET /alarm-server/%1s HTTP/1.1\r\nHost:%2s\r\nConnection:close\r\n\r\n";
+const char* requestPattern =  "GET /alarm-server/rest/%1s HTTP/1.1\r\nHost:%2s\r\nConnection:close\r\n\r\n";
 
 char requestStringBuffer[90]; //buffer string for whole request
 const int* port = 8080;
