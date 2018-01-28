@@ -1,0 +1,61 @@
+apply plugin: 'com.moowork.node'
+
+
+group = 'com.tduch'
+version = '1.0.2-SNAPSHOT'
+
+
+description = """alarm-client react app"""
+
+
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    } 
+  }
+
+  dependencies {
+    classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+  }
+}
+
+
+node {
+    version = '8.9.1'
+    download = false
+}
+
+task npmRunBuild(type: NpmTask, dependsOn: 'npmInstall') {
+	 args = ['run', 'build']
+}
+
+/**
+	Copies static sources to the alarm-server web-app
+*/
+task copyStaticSources(dependsOn: 'npmRunBuild') {
+	doLast {
+        println 'copy static sources from alarm-client/build to ../alarm-server/src/main/webapp/react/'
+    	delete "../alarm-server/src/main/webapp/react/"
+		copy {
+       		from 'build/'
+       		into '../alarm-server/src/main/webapp/react/'
+     	}   
+		        
+    }       
+}
+
+/*
+task build(dependsOn: 'npmRunBuild') {
+}
+*/
+task build(dependsOn: 'copyStaticSources') {
+}
+
+
+
+
+
+
+
+

@@ -53,3 +53,9 @@ exclude(module: 'jackson-annotations')
     compile group: 'org.mongodb', name: 'mongo-java-driver', version:'3.5.0'
     testCompile group: 'junit', name: 'junit', version:'3.8.1'
 }
+
+task myAction(dependsOn: ":alarm-client:copyStaticSources") {
+    doLast {
+        println("Static sources have been copied from alarm-client:")
+    }
+}
