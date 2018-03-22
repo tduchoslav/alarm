@@ -34,7 +34,7 @@ const char* requestPattern =  "GET /alarm-server/rest/%1s HTTP/1.1\r\nHost:%2s\r
 
 char requestStringBuffer[90]; //buffer string for whole request
 const int* port = 8080;
-char* ip = "192.168.0.102";
+char* ip = "192.168.1.102";
 
 const long ACTIVATION_TIMER_INTERVAL = 35000; //35 sec.
 const long COUNTDOWN_ALARM_TIMER_INTERVAL = 45000; //45 sec.
@@ -63,7 +63,7 @@ int alarmServerStatusCheckerTimerId; // checks the server if it is not running.
 
 
 //movement detector vars.
-byte pirPin = 9; // Input for HC-S501, dtektor pohybu
+byte pirPin = 13; // Input for HC-S501, dtektor pohybu
 byte pirValue; // Place to store read PIR Value
 
 /**
@@ -147,7 +147,9 @@ void setup() {
 
 }
 
-void loop() {    
+void loop() {   
+  //Serial.println(digitalRead(pirPin));
+   
   simpleTimer.run();
 
   if (isRedLedOn) {
