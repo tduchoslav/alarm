@@ -93,12 +93,6 @@ public class AlarmServiceRest {
 		return testResponse;
 	}
 	
-//	//voltage/currentVolts=6,5
-//	@RequestMapping(value={"/alarmBatteryVoltageStatusRest", "/voltage"} , method = RequestMethod.GET)
-//	public TestResponse alarmBatteryVoltageStatus(@RequestParam double currentVolts) {
-//		alarmService.processVoltage(currentVolts);
-//		return new TestResponse("test");
-//	}
 
 	@RequestMapping(value = { "/alarmLogsRest", "/logs" })
 	public TestResponse alarmLogs() {

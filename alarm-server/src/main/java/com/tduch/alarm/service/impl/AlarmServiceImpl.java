@@ -1,26 +1,21 @@
 package com.tduch.alarm.service.impl;
 
-import javax.mail.MessagingException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
 import com.tduch.alarm.conf.AppProperties;
-import com.tduch.alarm.conf.EmailParameters;
-import com.tduch.alarm.conf.SmsParameters;
-import com.tduch.alarm.dto.AlarmEmailInfoDto;
-import com.tduch.alarm.email.EmailUtil;
+import com.tduch.alarm.email.EmailSenderData;
+import com.tduch.alarm.email.EmailSenderService;
 import com.tduch.alarm.external.ExecuteShellComand;
 import com.tduch.alarm.holder.AlarmInfoHolder;
 import com.tduch.alarm.monitoring.DetectedMovementMonitor;
-import com.tduch.alarm.service.AlarmEmailInfoService;
 import com.tduch.alarm.service.AlarmService;
 import com.tduch.alarm.service.AlarmSnapshotsService;
 import com.tduch.alarm.service.AlarmStatusService;
-import com.tduch.alarm.sms.SmsUtil;
+import com.tduch.alarm.sms.SmsSenderData;
+import com.tduch.alarm.sms.SmsSenderService;
 
 @Service
 public class AlarmServiceImpl implements AlarmService {
@@ -34,9 +29,6 @@ public class AlarmServiceImpl implements AlarmService {
 	private AlarmStatusService alarmStatusService;
 	
 	@Autowired
-	private AlarmEmailInfoService alarmEmailInfoService;
-	
-	@Autowired
 	private DetectedMovementMonitor detectedMovementMonitor;
 	
 	@Autowired
@@ -44,6 +36,12 @@ public class AlarmServiceImpl implements AlarmService {
 	
 	@Autowired
 	private AppProperties appProperties;
+	
+	
+	@Autowired
+	private SmsSenderService smsSenderService;
+	@Autowired
+	private EmailSenderService emailSenderService;
 	
 	@Override
 	public void alarmHeartBeat() {
@@ -87,59 +85,10 @@ public class AlarmServiceImpl implements AlarmService {
 	@Override
 	public void detectedMovement() {
 		LOGGER.info("Alarm detected movement!!!");
-		if (appProperties.isSmsEnable()) {
-			try {
-				SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
-						appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
-				if (appProperties.isSmsEnable()) {
-					SmsUtil.sendSms(smsParameters, "ALARM: Movement detected in our house!");
-				}
-			} catch (Exception e) {
-				LOGGER.error("Could not send SMS.", e);
-			}
-		}
-		if (appProperties.isEmailEnable()) {
-			try {
-				EmailParameters emailParameters = null;
-				if (alarmEmailInfoService.getSentEmailsCountInCurrentMonth() < appProperties.getMaxNumEmailsPerMonth()) {
-					emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
-						appProperties.getEmailFromPassword(), appProperties.getEmailTo());
-				} else {
-					//max limit exceeded, send email to backup email
-					emailParameters = new EmailParameters(appProperties.getEmailFrom2(), 
-							appProperties.getEmailFromPassword2(), appProperties.getEmailTo2());
-				}
-				if (appProperties.isEmailEnable()) {
-					AlarmEmailInfoDto emailInfoDto = new AlarmEmailInfoDto();
-					emailInfoDto.setEmailInfo("Movement detected warning.");
-					emailInfoDto.setSentTmstmp(System.currentTimeMillis());
-					alarmEmailInfoService.insert(emailInfoDto);
-					
-					boolean cameraEnable = appProperties.isCameraEnable();
-					String directory = appProperties.getSnapshotsDir();
-					if (alarmInfoHolder.getLastDetectedMovementInfoTimestamp() == null) {
-						//probably request detectedMovementInfo has not been received, so the snapshot does not exist
-						cameraEnable = false;
-					}
-					if (!cameraEnable) {
-						//sent email without picture
-						EmailUtil.sendAlarmEmail(emailParameters);
-					} else {
-						String imageFileName = ExecuteShellComand.getFileName(appProperties.getSnapshotsPrefix(), 
-								alarmInfoHolder.getLastDetectedMovementInfoTimestamp(), appProperties.getSnapshotsSuffix());
-						//load file from the disk
-						FileSystemResource file = new FileSystemResource(directory + "/" + imageFileName);
-						try {
-							EmailUtil.sendAlarmEmailWithAttachment(emailParameters, file);
-						} catch (MessagingException e) {
-							LOGGER.error("Could not send the email with picture.", e);
-						}
-					}
-				}
-			} catch (Exception e) {
-				LOGGER.error("Could not send email.", e);
-			}
-		}
+		SmsSenderData smsData = new SmsSenderData("Movement detected warning.");
+		smsSenderService.send(smsData);
+		EmailSenderData emailData = new EmailSenderData("Movement detected warning.");
+		emailSenderService.send(emailData);
 				
 		//disable alarm after movement is detected
 		disableAlarm();
@@ -171,26 +120,10 @@ public class AlarmServiceImpl implements AlarmService {
 	public void processVoltage(double currentVolts) {
 		LOGGER.info("Alarm process voltage: " + currentVolts + "V.");
 		if (currentVolts < 6.0) {
-			//send email
-			if (appProperties.isEmailEnable()) {
-				try {
-					EmailParameters emailParameters = new EmailParameters(appProperties.getEmailFrom(), 
-							appProperties.getEmailFromPassword(), appProperties.getEmailTo());
-					EmailUtil.sendAlarmEmail(emailParameters);
-				} catch (Exception e) {
-					LOGGER.error("Could not send email.", e);
-				}
-			}
-			if (appProperties.isSmsEnable()) {
-				//sends SMS
-				try {
-					SmsParameters smsParameters = new SmsParameters(appProperties.getSmsAccountSid(), 
-							appProperties.getSmsAccountAuthToken(), appProperties.getPhoneNumberTo(), appProperties.getPhoneNumberFrom());
-					SmsUtil.sendSms(smsParameters, "WARN: ESP batteries are low !" + currentVolts + " V.");
-				} catch (Exception e) {
-					LOGGER.error("Could not send SMS.", e);
-				}			
-			}
+			SmsSenderData smsData = new SmsSenderData("WARN: ESP batteries are low !" + currentVolts + " V.");
+			smsSenderService.send(smsData);
+			EmailSenderData emailData = new EmailSenderData("WARN: ESP batteries are low !" + currentVolts + " V.");
+			emailSenderService.send(emailData);
 		}
 		
 	}
